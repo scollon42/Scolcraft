@@ -1,6 +1,6 @@
 #include "ShaderLoader.h"
 
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <spdlog/spdlog.h>
 
 // TODO refactor this code

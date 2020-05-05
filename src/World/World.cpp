@@ -6,7 +6,7 @@ world::World world::generate_world() noexcept
 {
   world::World world{};
 
-  constexpr auto WORLD_SIZE = 5;
+  constexpr auto WORLD_SIZE = 1;
 
   for (unsigned int z = 0; z < WORLD_SIZE; z++) {
     for (unsigned int x = 0; x < WORLD_SIZE; x++) {

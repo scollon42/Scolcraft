@@ -1,6 +1,6 @@
 #include "Program.h"
 #include <spdlog/spdlog.h>
-#include <glad/glad.h>
+#include <GL/glew.h>
 
 shaders::Program::Program() : id(glCreateProgram())
 {}
@@ -42,8 +42,7 @@ void shaders::Program::use() const noexcept
 
 void shaders::Program::delete_attached_shaders() noexcept
 {
-  for (const auto &shader_id : attached_shader_ids)
-  {
+  for (const auto &shader_id : attached_shader_ids) {
     glDeleteShader(shader_id);
   }
   attached_shader_ids.clear();

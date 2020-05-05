@@ -2,7 +2,7 @@
 #include <Shaders/Program.h>
 #include <Shaders/ShaderLoader.h>
 
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
