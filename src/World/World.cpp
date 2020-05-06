@@ -2,23 +2,35 @@
 
 #include <spdlog/spdlog.h>
 
-world::World world::generate_world() noexcept
+world::World world::World::generate_world(unsigned int iteration_number) noexcept
 {
   world::World world{};
 
-  constexpr auto WORLD_SIZE = 1;
+  for (unsigned int z = 0; z < iteration_number; z++) {
+    for (unsigned int x = 0; x < iteration_number; x++) {
+      world::chunk_id id{ z * iteration_number + x };
+      auto chunk = world::Chunk::build_chunk(id, glm::vec3{ x, 0, z });
 
-  for (unsigned int z = 0; z < WORLD_SIZE; z++) {
-    for (unsigned int x = 0; x < WORLD_SIZE; x++) {
-      world::Chunk chunk{ world::generate_chunk(z * WORLD_SIZE + x, glm::vec3{ x, 0, z }) };
-      spdlog::info("Chunk [{}] has position [{}, {}, {}].", chunk.id, chunk.position.x, chunk.position.y, chunk.position.z);
-
-      world::build_mesh(chunk);
-      world.chunks.emplace_back(chunk);
+      world.add_chunk(chunk);
     }
   }
 
-  spdlog::info("World has {} chunks.", world.chunks.size());
+  spdlog::info("World has {} chunks.", world.get_chunk_count());
 
   return world;
+}
+
+const std::vector<world::Chunk> &world::World::get_chunks() const noexcept
+{
+  return this->_chunks;
+}
+
+std::size_t world::World::get_chunk_count() const noexcept
+{
+  return this->_chunks.size();
+}
+
+void world::World::add_chunk(const world::Chunk &chunk) noexcept
+{
+  this->_chunks.emplace_back(chunk);
 }

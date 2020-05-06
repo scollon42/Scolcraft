@@ -4,11 +4,15 @@
 #include "Chunk.h"
 
 namespace world {
-struct World
+class World
 {
-  std::vector<Chunk> chunks;
+public:
+  [[nodiscard]] static World generate_world(unsigned int iteration_number) noexcept;
+  [[nodiscard]] std::size_t get_chunk_count() const noexcept;
+  [[nodiscard]] const std::vector<Chunk> &get_chunks() const noexcept;
+  void add_chunk(const Chunk &chunk) noexcept;
+
+private:
+  std::vector<Chunk> _chunks;
 };
-
-[[nodiscard]] World generate_world() noexcept;
-
 }// namespace world

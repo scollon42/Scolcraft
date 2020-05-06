@@ -12,28 +12,33 @@ constexpr auto CHUNK_SIZE_X = 16;
 constexpr auto CHUNK_SIZE_Y = 256;
 constexpr auto CHUNK_SIZE_Z = 16;
 
-struct Chunk
+using chunk_id = unsigned int;
+
+class Chunk
 {
-  unsigned int id;
-  std::vector<Block> blocks;
-  glm::vec3 position;
-  renderer::Mesh mesh;
+public:
+  static Chunk build_chunk(chunk_id id, const glm::vec3 &position);
+
+  [[nodiscard]] chunk_id get_chunk_id() const noexcept;
+  [[nodiscard]] const glm::vec3 &get_position() const noexcept;
+  [[nodiscard]] const Block &get_block_at_absolute(const glm::vec3 &position) const;
+  [[nodiscard]] const Block &get_block_at_relative(const glm::vec3 &position) const;
+  [[nodiscard]] const std::vector<Block> &get_blocks() const noexcept;
+  void add_block(Block &&block) noexcept;
+  void add_block(const Block &block) noexcept;
+
+protected:
+  Chunk(chunk_id id, const glm::vec3 &position);
+  Chunk(chunk_id id, const glm::vec3 &position, std::vector<Block> locks);
+
+private:
+  chunk_id _id;
+  glm::vec3 _position;
+  std::vector<Block> _blocks;
+  renderer::Mesh _mesh;//FIXME not sure i want to keep it here
 };
 
-[[nodiscard]] world::Chunk generate_chunk(unsigned int id, const glm::vec3 &position);
-
-[[nodiscard]] glm::vec3 absolute_block_position(const Chunk &chunk, const Block &block) noexcept;
-[[nodiscard]] glm::vec3 relative_block_position(const world::Chunk &chunk, const world::Block &block) noexcept;
-
-[[nodiscard]] bool is_next_to_air_block(const Chunk &chunk, const Block &block) noexcept;
-
-[[nodiscard]] const Block &absolute_block_at(const Chunk &chunk, const glm::vec3 &position);
-
-[[nodiscard]] renderer::Mesh get_chunk_mesh(const world::Chunk &chunk) noexcept;
-
-[[nodiscard]] std::vector<renderer::Vertex> get_block_vertex_data(const world::Chunk &chunk, const world::Block &block);
 
 void build_mesh(Chunk &chunk);
 void draw(const Chunk &chunk);
-
 }// namespace world

@@ -16,7 +16,8 @@
 #include "Utils/PerlinNoise.h"
 
 #include "World/World.h"
-
+#include "Renderer/ChunkMeshBuilder.h"
+#include "Renderer/ChunkRenderer.h"
 struct DestroyGlfwWin
 {
   void operator()(GLFWwindow *ptr) const noexcept
@@ -119,11 +120,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   const auto program = shaders::DefaultProgram::build();
   //  const auto texture = load_texture();
 
-  const auto world{ world::generate_world() };
+  auto chunk_renderer = renderer::ChunkRenderer{};
 
-  //  for (auto chunk : world.chunks) {
-  //    world::build_mesh(chunk);
-  //  }
+  const auto world{ world::World::generate_world(1) };
+
+  for (const auto &chunk : world.get_chunks()) {
+    chunk_renderer.update_mesh(chunk.get_chunk_id(), renderer::ChunkMeshBuilder::build(chunk));
+  }
   //  //
   //  const auto &chunk_mesh = world::get_chunk_mesh(world.chunks[0]);
   //  chunk_mesh.build();
@@ -149,21 +152,29 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
     if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(window.get(), true);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
       camera_position += camera_speed * camera_front;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
       camera_position -= camera_speed * camera_front;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
       camera_position -= camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-    } else if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
       camera_position += camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-    } else if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
       y_axis_position += 1.0f * camera_speed;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+    }
+    if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
       y_axis_position -= 1.0f * camera_speed;
     }
 
@@ -195,16 +206,11 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     glm::mat4 model{ 1.0f };
     model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
     program.set_model_uniform(model);
-    for (const auto &chunk : world.chunks) {
-      world::draw(chunk);
-    }
+
+    chunk_renderer.render();
 
     glfwSwapBuffers(window.get());
     glfwPollEvents();
-  }
-
-  for (auto chunk : world.chunks) {
-    chunk.mesh.destroy();
   }
 
   return (0);

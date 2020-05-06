@@ -4,11 +4,6 @@
 #include "Vertex.h"
 
 namespace renderer {
-//struct Vertex
-//{
-//  float vertices[3];
-//  float normals[3];
-//};
 
 class Mesh
 {
