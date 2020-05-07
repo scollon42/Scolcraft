@@ -59,7 +59,6 @@ void framebuffer_size_callback([[maybe_unused]] GLFWwindow *window, int width, i
 float yaw{ 0 };
 float pitch{ 0 };
 glm::vec3 camera_front{ 0.0f, 0.0f, -1.0f };
-//
 void mouse_position_callback([[maybe_unused]] GLFWwindow *window, double position_x, double position_y) noexcept
 {
   constexpr auto sensitivity{ 0.03f };
@@ -97,7 +96,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
   //  spdlog::set_level(spdlog::level::debug);
   spdlog::info("Starting game applicaton");
-
+  
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -140,7 +139,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   float last_frame_time{ 0 };
 
   while (!glfwWindowShouldClose(window.get())) {
-
     const float current_frame_time{ static_cast<float>(glfwGetTime()) };
     const float delta_time = current_frame_time - last_frame_time;
     last_frame_time = current_frame_time;
@@ -192,7 +190,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
     program.use();
 
-
     const auto &view_position_location = glGetUniformLocation(program.get_id(), "view_position");
     const auto &object_color_location = glGetUniformLocation(program.get_id(), "object_color");
     const auto &light_color_location = glGetUniformLocation(program.get_id(), "light_color");
@@ -221,14 +218,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
       world::draw(chunk);
     }
 
-    //    chunk_mesh.render();
     glfwSwapBuffers(window.get());
     glfwPollEvents();
   }
+
   for (auto chunk : world.chunks) {
     chunk.mesh.destroy();
   }
 
-  glfwTerminate();
   return (0);
 }

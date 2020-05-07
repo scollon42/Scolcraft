@@ -55,6 +55,8 @@ set(CONAN_EXTRA_REQUIRES ${CONAN_EXTRA_REQUIRES}
         )
 
 set(CONAN_EXTRA_OPTIONS ${CONAN_EXTRA_OPTIONS}
+        #        sfml:shared=False
+        #        sfml:graphics=True sfml:audio=False sfml:window=True
         )
 
 include(cmake/Conan.cmake)
