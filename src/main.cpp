@@ -1,5 +1,4 @@
-#include <GL/glew.h>
-#include <docopt/docopt.h>
+#include <glad/glad.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/geometric.hpp>
 #include <spdlog/spdlog.h>
@@ -26,7 +25,7 @@ struct DestroyGlfwWin
   }
 };
 
-[[maybe_unused]] unsigned int load_texture()
+unsigned int load_texture()
 {
   unsigned int texture = 0;
 
@@ -103,7 +102,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  std::unique_ptr<GLFWwindow, DestroyGlfwWin> window{ glfwCreateWindow(1600, 1200, "OpenGL", nullptr, nullptr) };
+  std::unique_ptr<GLFWwindow, DestroyGlfwWin> window{ glfwCreateWindow(800, 600, "OpenGL", nullptr, nullptr) };
   if (window.get() == nullptr) {
     spdlog::error("Failed to create GLFW window");
     std::abort();
@@ -115,27 +114,30 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   glfwSetCursorPosCallback(window.get(), mouse_moved);
 
-  glewInit();
+  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
+    spdlog::error("Failed to initialize GLAD");
+    std::abort();
+  }
+
 
   const auto program = shaders::DefaultProgram::build();
   //  const auto texture = load_texture();
 
   auto chunk_renderer = renderer::ChunkRenderer{};
 
-  const auto world{ world::World::generate_world(1) };
+  //  const auto world{ world::World::generate_world(1) };
 
-  for (const auto &chunk : world.get_chunks()) {
-    chunk_renderer.update_mesh(chunk.get_chunk_id(), renderer::ChunkMeshBuilder::build(chunk));
-  }
-  //  //
-  //  const auto &chunk_mesh = world::get_chunk_mesh(world.chunks[0]);
-  //  chunk_mesh.build();
+  //  for (const auto &chunk : world.get_chunks()) {
+  auto chunk = world::Chunk::build_chunk(0, glm::vec3{ 0, 0, 0 });
+  const auto mesh = renderer::ChunkMeshBuilder::build(chunk);
+  //  mesh.build();
+  //  }
 
   constexpr float base_camera_speed{ 3.0f };
   glm::vec3 camera_position{ 8, 2, 8 };
   const glm::vec3 camera_up{ 0.0f, 1.0f, 0.0f };
 
-  float y_axis_position{ 2 };
+  float y_axis_position{ 256 };
 
   float last_frame_time{ 0 };
 
@@ -145,8 +147,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     last_frame_time = current_frame_time;
     const auto camera_speed = base_camera_speed * delta_time;
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
@@ -187,10 +187,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     const auto &light_color_location = glGetUniformLocation(program.get_id(), "light_color");
     const auto &light_position_location = glGetUniformLocation(program.get_id(), "light_position");
 
-    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 0.87f, 0.10f)));
-    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 1.0f, 0.35f)));
+    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(0.35f, 0.87f, 0.10f)));
+    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
     glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(15.0f, 50.0f, 10.0f)));
-
     glUniform3fv(view_position_location, 1, glm::value_ptr(camera_position));
 
     // represent camera
@@ -207,9 +206,14 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
     program.set_model_uniform(model);
 
-    chunk_renderer.render();
+    //    chunk_renderer.render();
+    mesh.render();
 
     glfwSwapBuffers(window.get());
+
+    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glfwPollEvents();
   }
 

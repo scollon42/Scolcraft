@@ -10,9 +10,9 @@ class ChunkRenderer
 {
 public:
   void remove_chunk(unsigned int chunk_id) noexcept;
-  void update_mesh(unsigned int chunk_id, const Mesh &meshes) noexcept;
+  void update_mesh(unsigned int chunk_id, const Mesh &mesh) noexcept;
 
-  void render() noexcept;
+  void render() const noexcept;
 
 private:
   std::map<unsigned int, Mesh> _chunk_meshes;

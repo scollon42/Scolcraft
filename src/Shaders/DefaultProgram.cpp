@@ -2,7 +2,7 @@
 #include <Shaders/Program.h>
 #include <Shaders/ShaderLoader.h>
 
-#include <GL/glew.h>
+#include <glad/glad.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
@@ -11,7 +11,6 @@ constexpr auto MODEL_LOCATION = "model";
 constexpr auto VIEW_LOCATION = "view";
 constexpr auto PROJECTION_LOCATION = "projection";
 }// namespace uniforms
-
 
 //TODO extract that in files
 [[maybe_unused]] constexpr auto vertex_shader_src =
@@ -106,6 +105,7 @@ void shaders::DefaultProgram::set_view_uniform(const glm::mat4 &model) const noe
 {
   set_uniform(this->id, uniforms::VIEW_LOCATION, model);
 }
+
 void shaders::DefaultProgram::set_projection_uniform(const glm::mat4 &model) const noexcept
 {
   set_uniform(this->id, uniforms::PROJECTION_LOCATION, model);
