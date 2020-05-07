@@ -2,7 +2,7 @@
 #include <Shaders/Program.h>
 #include <Shaders/ShaderLoader.h>
 
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 
@@ -40,12 +40,11 @@ void main()
 [[maybe_unused]] constexpr auto fragment_shader_src =
   R"(
 #version 330 core
-out vec4 Fragment_color;
-
-//in vec2 vertex_text_coord;
 in vec3 Fragment_position;
 in vec3 Normal;
-//uniform sampler2D u_texture;
+
+out vec4 Fragment_color;
+
 uniform vec3 light_position;
 uniform vec3 view_position;
 uniform vec3 light_color;

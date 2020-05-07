@@ -1,10 +1,9 @@
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <docopt/docopt.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/geometric.hpp>
 #include <spdlog/spdlog.h>
-#include <SFML/Window.hpp>
-#include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -18,13 +17,13 @@
 
 #include "World/World.h"
 
-//struct DestroyGlfwWin
-//{
-//  void operator()(GLFWwindow *ptr) const noexcept
-//  {
-//    glfwDestroyWindow(ptr);
-//  }
-//};
+struct DestroyGlfwWin
+{
+  void operator()(GLFWwindow *ptr) const noexcept
+  {
+    glfwDestroyWindow(ptr);
+  }
+};
 
 [[maybe_unused]] unsigned int load_texture()
 {
@@ -51,85 +50,72 @@
   stbi_image_free(data);
   return texture;
 }
-//
-//void framebuffer_size_callback([[maybe_unused]] GLFWwindow *window, int width, int height)
-//{
-//  glViewport(0, 0, width, height);
-//}
 
-//float yaw{ 0 };
-//float pitch{ 0 };
+void framebuffer_size_callback([[maybe_unused]] GLFWwindow *window, int width, int height)
+{
+  glViewport(0, 0, width, height);
+}
+
+float yaw{ 0 };
+float pitch{ 0 };
 glm::vec3 camera_front{ 0.0f, 0.0f, -1.0f };
 //
-//void mouse_position_callback([[maybe_unused]] GLFWwindow *window, double position_x, double position_y) noexcept
-//{
-//  constexpr auto sensitivity{ 0.03f };
-//
-//  static auto last_x_position = static_cast<float>(position_x);
-//  static auto last_y_position = static_cast<float>(position_y);
-//
-//  spdlog::debug("Current mouse position is [{}, {}]", static_cast<float>(position_x), static_cast<float>(position_y));
-//  spdlog::debug("Last mouse position is [{}, {}]", last_x_position, last_y_position);
-//
-//  const auto x_offset = (static_cast<float>(position_x) - last_x_position) * sensitivity;
-//  const auto y_offset = (last_y_position - static_cast<float>(position_y)) * sensitivity;//reverse to have natural mouse movement on y axis
-//
-//  spdlog::debug("Calculated mouse offset is [{}, {}]", x_offset, y_offset);
-//
-//  last_x_position = static_cast<float>(position_x);
-//  last_y_position = static_cast<float>(position_y);
-//
-//  yaw += x_offset;
-//  pitch += y_offset;
-//
-//  pitch = std::clamp(pitch, -89.0f, 89.0f);
-//
-//  spdlog::debug("Yaw = [{}]; Pitch = [{}].", yaw, pitch);
-//
-//  const glm::vec3 direction{
-//    cosf(glm::radians(yaw)) * cosf(glm::radians(pitch)),
-//    sinf(glm::radians(pitch)),
-//    sinf(glm::radians(yaw)) * cosf(glm::radians(pitch))
-//  };
-//  camera_front = glm::normalize(direction);
-//}
+void mouse_position_callback([[maybe_unused]] GLFWwindow *window, double position_x, double position_y) noexcept
+{
+  constexpr auto sensitivity{ 0.03f };
+
+  static auto last_x_position = static_cast<float>(position_x);
+  static auto last_y_position = static_cast<float>(position_y);
+
+  spdlog::debug("Current mouse position is [{}, {}]", static_cast<float>(position_x), static_cast<float>(position_y));
+  spdlog::debug("Last mouse position is [{}, {}]", last_x_position, last_y_position);
+
+  const auto x_offset = (static_cast<float>(position_x) - last_x_position) * sensitivity;
+  const auto y_offset = (last_y_position - static_cast<float>(position_y)) * sensitivity;//reverse to have natural mouse movement on y axis
+
+  spdlog::debug("Calculated mouse offset is [{}, {}]", x_offset, y_offset);
+
+  last_x_position = static_cast<float>(position_x);
+  last_y_position = static_cast<float>(position_y);
+
+  yaw += x_offset;
+  pitch += y_offset;
+
+  pitch = std::clamp(pitch, -89.0f, 89.0f);
+
+  spdlog::debug("Yaw = [{}]; Pitch = [{}].", yaw, pitch);
+
+  const glm::vec3 direction{
+    cosf(glm::radians(yaw)) * cosf(glm::radians(pitch)),
+    sinf(glm::radians(pitch)),
+    sinf(glm::radians(yaw)) * cosf(glm::radians(pitch))
+  };
+  camera_front = glm::normalize(direction);
+}
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
   //  spdlog::set_level(spdlog::level::debug);
   spdlog::info("Starting game applicaton");
-  sf::ContextSettings settings;
-  settings.depthBits = 24;
-  settings.stencilBits = 8;
-  settings.antialiasingLevel = 4;
-  settings.majorVersion = 3;
-  settings.minorVersion = 3;
 
-  sf::Window window(sf::VideoMode(800, 600), "Game", sf::Style::Default, settings);
+  glfwInit();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+  std::unique_ptr<GLFWwindow, DestroyGlfwWin> window{ glfwCreateWindow(1600, 1200, "OpenGL", nullptr, nullptr) };
+  if (window.get() == nullptr) {
+    spdlog::error("Failed to create GLFW window");
+    std::abort();
+  }
+
+  glfwMakeContextCurrent(window.get());
+
+  glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
+  glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+  glfwSetCursorPosCallback(window.get(), mouse_position_callback);
 
   glewInit();
-  //  glfwInit();
-  //  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  //  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  //  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-  //  std::unique_ptr<GLFWwindow, DestroyGlfwWin> window{ glfwCreateWindow(1600, 1200, "OpenGL", nullptr, nullptr) };
-  //  if (window.get() == nullptr) {
-  //    spdlog::error("Failed to create GLFW window");
-  //    std::abort();
-  //  }
-
-  //  glfwMakeContextCurrent(window.get());
-  //
-  //  glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
-  //  glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  //  glfwSetCursorPosCallback(window.get(), mouse_position_callback);
-  //
-  //  if (!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress))) {
-  //    spdlog::error("Failed to initialize GLAD.");
-  //    std::abort();
-  //  }
 
   const auto program = shaders::DefaultProgram::build();
   //  const auto texture = load_texture();
@@ -143,76 +129,64 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   //  const auto &chunk_mesh = world::get_chunk_mesh(world.chunks[0]);
   //  chunk_mesh.build();
 
-  constexpr float base_camera_speed{ 3.0f };
-  glm::vec3 camera_position{ 8, 2, 8 };
+  constexpr float base_camera_speed{ 8.0f };
+  const auto &size = world.chunks.size();
+
+  glm::vec3 camera_position{ size + world::CHUNK_SIZE_X / 2, 200, size + world::CHUNK_SIZE_Z / 2 };
   const glm::vec3 camera_up{ 0.0f, 1.0f, 0.0f };
 
-  float y_axis_position{ 2 };
+  float y_axis_position{ camera_position.y };
 
   float last_frame_time{ 0 };
 
-  bool running{ true };
-  //  while (!glfwWindowShouldClose(window.get())) {
-  while (running) {
-    sf::Event event{};
+  while (!glfwWindowShouldClose(window.get())) {
 
-    while (window.pollEvent(event)) {
-      if (event.type == sf::Event::Closed) {
-        running = false;
-      }
+    const float current_frame_time{ static_cast<float>(glfwGetTime()) };
+    const float delta_time = current_frame_time - last_frame_time;
+    last_frame_time = current_frame_time;
+    const auto camera_speed = base_camera_speed * delta_time;
 
-      else if (event.type == sf::Event::Resized) {
-        glViewport(0, 0, static_cast<int>(event.size.width), static_cast<int>(event.size.height));
-      }
-
-      else if (event.type == sf::Event::KeyPressed) {
-        if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-          glfwSetWindowShouldClose(window.get(), true);
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
-          glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
-          glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
-          camera_position += camera_speed * camera_front;
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
-          camera_position -= camera_speed * camera_front;
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
-          camera_position -= camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
-          camera_position += camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-          y_axis_position += 1.0f * camera_speed;
-        }
-
-        else if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-          y_axis_position -= 1.0f * camera_speed;
-        }
-      }
+    if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+      glfwSetWindowShouldClose(window.get(), true);
     }
 
-    //    const float current_frame_time{ static_cast<float>(glfwGetTime()) };
-    //    const float delta_time = current_frame_time - last_frame_time;
-    //    last_frame_time = current_frame_time;
-    //    const auto camera_speed = base_camera_speed * delta_time;
+    if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
+      camera_position += camera_speed * camera_front;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
+      camera_position -= camera_speed * camera_front;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
+      camera_position -= camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
+      camera_position += camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+      y_axis_position += 1.0f * camera_speed;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      y_axis_position -= 1.0f * camera_speed;
+    }
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT_FACE);
 
     camera_position.y = y_axis_position;
 
@@ -224,9 +198,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     const auto &light_color_location = glGetUniformLocation(program.get_id(), "light_color");
     const auto &light_position_location = glGetUniformLocation(program.get_id(), "light_position");
 
-    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 0.87f, 0.10f)));
-    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 1.0f, 0.35f)));
-    glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(15.0f, 50.0f, 10.0f)));
+    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 0.87f, 0.10f)));
+    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+    glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(15.0f, 300.0f, 10.0f)));
 
     glUniform3fv(view_position_location, 1, glm::value_ptr(camera_position));
 
@@ -241,7 +215,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     program.set_projection_uniform(projection);
 
     glm::mat4 model{ 1.0f };
-    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+    //    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
     program.set_model_uniform(model);
     for (const auto &chunk : world.chunks) {
       world::draw(chunk);

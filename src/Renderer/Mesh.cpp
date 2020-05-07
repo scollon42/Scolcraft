@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 
 #include <spdlog/spdlog.h>
 
@@ -51,8 +51,8 @@ void renderer::Mesh::unbind() const noexcept
 
 void renderer::Mesh::render() const noexcept
 {
-  spdlog::info("Mesh {} rendering {} vertices", this->_vertex_array, this->_vertices.size());
+  //  spdlog::info("Mesh {} rendering {} vertices", this->_vertex_array, this->_vertices.size());
   bind();
-  glDrawArrays(GL_TRIANGLES, 0, this->_vertices.size());
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<int>(this->_vertices.size()));
   unbind();
 }
