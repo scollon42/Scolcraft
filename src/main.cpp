@@ -1,9 +1,9 @@
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include <docopt/docopt.h>
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/geometric.hpp>
 #include <spdlog/spdlog.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -59,8 +59,7 @@ void framebuffer_size_callback([[maybe_unused]] GLFWwindow *window, int width, i
 float yaw{ 0 };
 float pitch{ 0 };
 glm::vec3 camera_front{ 0.0f, 0.0f, -1.0f };
-
-void mouse_moved([[maybe_unused]] GLFWwindow *window, double position_x, double position_y) noexcept
+void mouse_position_callback([[maybe_unused]] GLFWwindow *window, double position_x, double position_y) noexcept
 {
   constexpr auto sensitivity{ 0.03f };
 
@@ -97,6 +96,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 {
   //  spdlog::set_level(spdlog::level::debug);
   spdlog::info("Starting game applicaton");
+  
   glfwInit();
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -112,7 +112,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
   glfwSetFramebufferSizeCallback(window.get(), framebuffer_size_callback);
   glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-  glfwSetCursorPosCallback(window.get(), mouse_moved);
+  glfwSetCursorPosCallback(window.get(), mouse_position_callback);
 
   glewInit();
 
@@ -128,11 +128,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   //  const auto &chunk_mesh = world::get_chunk_mesh(world.chunks[0]);
   //  chunk_mesh.build();
 
-  constexpr float base_camera_speed{ 3.0f };
-  glm::vec3 camera_position{ 8, 2, 8 };
+  constexpr float base_camera_speed{ 8.0f };
+  const auto &size = world.chunks.size();
+
+  glm::vec3 camera_position{ size + world::CHUNK_SIZE_X / 2, 200, size + world::CHUNK_SIZE_Z / 2 };
   const glm::vec3 camera_up{ 0.0f, 1.0f, 0.0f };
 
-  float y_axis_position{ 2 };
+  float y_axis_position{ camera_position.y };
 
   float last_frame_time{ 0 };
 
@@ -142,30 +144,47 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     last_frame_time = current_frame_time;
     const auto camera_speed = base_camera_speed * delta_time;
 
+    if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+      glfwSetWindowShouldClose(window.get(), true);
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
+      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
+      camera_position += camera_speed * camera_front;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
+      camera_position -= camera_speed * camera_front;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
+      camera_position -= camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
+      camera_position += camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
+      y_axis_position += 1.0f * camera_speed;
+    }
+
+    if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+      y_axis_position -= 1.0f * camera_speed;
+    }
+
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
-
-    if (glfwGetKey(window.get(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-      glfwSetWindowShouldClose(window.get(), true);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_F) == GLFW_PRESS) {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_L) == GLFW_PRESS) {
-      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    } else if (glfwGetKey(window.get(), GLFW_KEY_W) == GLFW_PRESS) {
-      camera_position += camera_speed * camera_front;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_S) == GLFW_PRESS) {
-      camera_position -= camera_speed * camera_front;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_A) == GLFW_PRESS) {
-      camera_position -= camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-    } else if (glfwGetKey(window.get(), GLFW_KEY_D) == GLFW_PRESS) {
-      camera_position += camera_speed * glm::normalize(glm::cross(camera_front, camera_up));
-    } else if (glfwGetKey(window.get(), GLFW_KEY_SPACE) == GLFW_PRESS) {
-      y_axis_position += 1.0f * camera_speed;
-    } else if (glfwGetKey(window.get(), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-      y_axis_position -= 1.0f * camera_speed;
-    }
+    glCullFace(GL_FRONT_FACE);
 
     camera_position.y = y_axis_position;
 
@@ -176,9 +195,9 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     const auto &light_color_location = glGetUniformLocation(program.get_id(), "light_color");
     const auto &light_position_location = glGetUniformLocation(program.get_id(), "light_position");
 
-    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 0.87f, 0.10f)));
-    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 1.0f, 0.35f)));
-    glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(15.0f, 50.0f, 10.0f)));
+    glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 0.87f, 0.10f)));
+    glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(1.0f, 1.0f, 1.0f)));
+    glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(15.0f, 300.0f, 10.0f)));
 
     glUniform3fv(view_position_location, 1, glm::value_ptr(camera_position));
 
@@ -193,7 +212,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     program.set_projection_uniform(projection);
 
     glm::mat4 model{ 1.0f };
-    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
+    //    model = glm::scale(model, glm::vec3(0.1, 0.1, 0.1));
     program.set_model_uniform(model);
     for (const auto &chunk : world.chunks) {
       world::draw(chunk);
