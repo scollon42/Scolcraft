@@ -8,7 +8,7 @@ world::World world::World::generate_world(unsigned int iteration_number) noexcep
 
   for (unsigned int z = 0; z < iteration_number; z++) {
     for (unsigned int x = 0; x < iteration_number; x++) {
-      const world::chunk_id id{ z * iteration_number + x };
+      world::chunk_id id{ z * iteration_number + x };
       auto chunk = world::Chunk::build_chunk(id, glm::vec3{ x, 0, z });
 
       world.add_chunk(chunk);

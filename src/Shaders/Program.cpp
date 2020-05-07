@@ -1,6 +1,6 @@
 #include "Program.h"
 #include <spdlog/spdlog.h>
-#include <glad/glad.h>
+#include <GL/glew.h>
 
 shaders::Program::Program() : id(glCreateProgram())
 {}

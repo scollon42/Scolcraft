@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 
 #include <spdlog/spdlog.h>
 
@@ -27,9 +27,14 @@ void renderer::Mesh::insert_data(const std::vector<renderer::Vertex> &vertices) 
 
 void renderer::Mesh::build() const noexcept
 {
-  //  bind();
+  bind();
+  glBufferData(GL_ARRAY_BUFFER, this->_vertices.size() * sizeof(renderer::Vertex), this->_vertices.data(), GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
+  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
 
-  //  unbind();
+  glEnableVertexAttribArray(0);
+  glEnableVertexAttribArray(1);
+  unbind();
 }
 
 void renderer::Mesh::bind() const noexcept
@@ -46,13 +51,8 @@ void renderer::Mesh::unbind() const noexcept
 
 void renderer::Mesh::render() const noexcept
 {
+  spdlog::info("Mesh {} rendering {} vertices", this->_vertex_array, this->_vertices.size());
   bind();
-  glBufferData(GL_ARRAY_BUFFER, this->_vertices.size() * sizeof(renderer::Vertex), this->_vertices.data(), GL_STATIC_DRAW);
-  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), nullptr);
-  glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), reinterpret_cast<void *>(3 * sizeof(float)));
-  glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  spdlog::debug("Mesh {} rendering {} vertices", this->_vertex_array, this->_vertices.size());
   glDrawArrays(GL_TRIANGLES, 0, static_cast<int>(this->_vertices.size()));
   unbind();
 }

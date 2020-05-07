@@ -37,7 +37,7 @@ renderer::Mesh renderer::ChunkMeshBuilder::build(const world::Chunk &chunk) noex
           && neighbour4.type == world::BlockType::DIRT
           && neighbour5.type == world::BlockType::DIRT
           && neighbour6.type == world::BlockType::DIRT) {
-        //spdlog::info("Chunk [{}] : Block at [{}, {}, {}] should not be drawn", chunk.get_chunk_id(), block.position.x, block.position.y, block.position.z);
+        spdlog::info("Chunk [{}] : Block at [{}, {}, {}] should not be drawn", chunk.get_chunk_id(), block.position.x, block.position.y, block.position.z);
         continue;
       }
     }
@@ -51,60 +51,53 @@ renderer::Mesh renderer::ChunkMeshBuilder::build(const world::Chunk &chunk) noex
 }
 
 //FIXME fix that
-//add BlockMesh class that permit to add faces
 std::vector<renderer::Vertex> get_block_vertex_data(const world::Chunk &chunk, const world::Block &block) noexcept
 {
   std::vector<renderer::Vertex> block_vertex_data{};
 
   const auto &chunk_position = chunk.get_position();
-  const auto block_position = glm::vec3{
-    chunk_position.x * world::CHUNK_SIZE_X + block.position.x,
-    chunk_position.y * world::CHUNK_SIZE_Y + block.position.y,
-    chunk_position.z * world::CHUNK_SIZE_Z + block.position.z
-  };
-
   //negative y
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z }, glm::vec3{ -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z + 1 }, glm::vec3{ -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z }, glm::vec3{ -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z }, glm::vec3{ -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z + 1 }, glm::vec3{ -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z + 1 }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ -1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ -1, 0, 0 } });
   // positive x
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z }, glm::vec3{ 1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z }, glm::vec3{ 1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z + 1 }, glm::vec3{ 1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z }, glm::vec3{ 1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z + 1 }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 1, 0, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 1, 0, 0 } });
   //negative y
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z }, glm::vec3{ 0, -1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z }, glm::vec3{ 0, -1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z + 1 }, glm::vec3{ 0, -1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z }, glm::vec3{ 0, -1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z + 1 }, glm::vec3{ 0, -1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z + 1 }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, -1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, -1, 0 } });
   //positive y
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z }, glm::vec3{ 0, 1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z }, glm::vec3{ 0, 1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z }, glm::vec3{ 0, 1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 1, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 1, 0 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 1, 0 } });
   //negative z
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z }, glm::vec3{ 0, 0, -1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z }, glm::vec3{ 0, 0, -1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z }, glm::vec3{ 0, 0, -1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z }, glm::vec3{ 0, 0, -1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z }, glm::vec3{ 0, 0, -1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z }, glm::vec3{ 0, 0, -1 } });
   //positive z
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ block_position.x + 1, block_position.y + 1, block_position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
+  block_vertex_data.emplace_back(renderer::Vertex{ glm::vec3{ chunk_position.x * world::CHUNK_SIZE_X + block.position.x + 1, chunk_position.y * world::CHUNK_SIZE_Y + block.position.y + 1, chunk_position.z * world::CHUNK_SIZE_Z + block.position.z + 1 }, glm::vec3{ 0, 0, 1 } });
 
   return block_vertex_data;
 }

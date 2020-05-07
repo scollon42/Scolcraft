@@ -58,8 +58,6 @@ world::Chunk world::Chunk::build_chunk(world::chunk_id id, const glm::vec3 &posi
           block.type = BlockType::DIRT;
         }
 
-        spdlog::info("Block of type {} is at {}, {}, {}", block.type == BlockType::AIR ? "AIR" : "DIRT", block.position.x, block.position.y, block.position.z);
-
         chunk.add_block(block);
       }
     }

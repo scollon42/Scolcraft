@@ -1,4 +1,5 @@
 #include "Block.h"
+#include <spdlog/spdlog.h>
 
 bool world::is_visible_block_type(world::BlockType type) noexcept
 {

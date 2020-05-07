@@ -19,7 +19,9 @@ target_link_libraries(
         CONAN_PKG::fmt
         CONAN_PKG::spdlog
         CONAN_PKG::stb
-        CONAN_PKG::glad
+        CONAN_PKG::glew
+        #        CONAN_PKG::glad
+        #        CONAN_PKG::sfml
         CONAN_PKG::glfw
         CONAN_PKG::glm
 )

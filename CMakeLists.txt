@@ -48,13 +48,17 @@ set(CONAN_EXTRA_REQUIRES "")
 set(CONAN_EXTRA_OPTIONS "")
 
 set(CONAN_EXTRA_REQUIRES ${CONAN_EXTRA_REQUIRES}
-        glad/0.1.33
+        glew/2.1.0@bincrafters/stable
+        #        sfml/2.5.1@bincrafters/stable
+        #        glad/0.1.33
         glfw/3.3.2@bincrafters/stable
         glm/0.9.9.8
         stb/20190512@conan/stable
         )
 
 set(CONAN_EXTRA_OPTIONS ${CONAN_EXTRA_OPTIONS}
+        #        sfml:shared=False
+        #        sfml:graphics=True sfml:audio=False sfml:window=True
         )
 
 include(cmake/Conan.cmake)
