@@ -14,10 +14,12 @@ constexpr auto CHUNK_SIZE_Z = 16;
 
 struct Chunk
 {
+  Chunk(unsigned int id, const glm::vec3 &position);
+
   unsigned int id;
-  std::vector<Block> blocks;
   glm::vec3 position;
-  renderer::Mesh mesh;
+  std::vector<Block> blocks;
+  //  renderer::Mesh mesh;
 };
 
 [[nodiscard]] world::Chunk generate_chunk(unsigned int id, const glm::vec3 &position);
@@ -32,8 +34,5 @@ struct Chunk
 [[nodiscard]] renderer::Mesh get_chunk_mesh(const world::Chunk &chunk) noexcept;
 
 [[nodiscard]] std::vector<renderer::Vertex> get_block_vertex_data(const world::Chunk &chunk, const world::Block &block);
-
-void build_mesh(Chunk &chunk);
-void draw(const Chunk &chunk);
 
 }// namespace world

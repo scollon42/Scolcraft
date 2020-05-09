@@ -2,30 +2,22 @@
 
 #include <vector>
 #include "Vertex.h"
+#include <memory>
 
 namespace renderer {
-//struct Vertex
-//{
-//  float vertices[3];
-//  float normals[3];
-//};
-
-class Mesh
+class Mesh final
 {
 public:
-  void init() noexcept;
-  void destroy() noexcept;
-  void update(const std::vector<Vertex> &vertices) noexcept;
-  void insert_data(const std::vector<Vertex> &vertices) noexcept;
-  void build() const noexcept;
-  void bind() const noexcept;
-  void unbind() const noexcept;
-  void render() const noexcept;
+  [[nodiscard]] const std::vector<Vertex> &get_vertex_data() const noexcept;
+  [[nodiscard]] int get_vertex_data_size() const noexcept;
+
+
+  void add_vertex(const Vertex &vertex) noexcept;
+  void update_vertex_data(std::vector<Vertex> vertex_data) noexcept;
+  void insert_vertex_data(const std::vector<Vertex> &vertex_data) noexcept;
 
 private:
-  unsigned int _vertex_array;
-  unsigned int _vertex_buffer;
-  std::vector<Vertex> _vertices;
+  std::vector<Vertex> _vertex_data;
 };
 
 }// namespace renderer

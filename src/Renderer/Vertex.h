@@ -3,9 +3,9 @@
 #include <glm/vec3.hpp>
 
 namespace renderer {
-struct Vertex
+struct Vertex final
 {
-  glm::vec3 vertex;
-  glm::vec3 normal;
+  float vertex[3];
+  float normal[3];
 };
 }// namespace renderer

@@ -29,10 +29,9 @@ uniform mat4 projection;
 
 void main()
 {
+    gl_Position = projection * view * model * vec4(position, 1.0);
     Fragment_position = vec3(model * vec4(position, 1.0));
     Normal = mat3(transpose(inverse(model))) * normal;
-    gl_Position = projection * view * vec4(Fragment_position, 1.0);
-    //vertex_text_coord = aTextCoord;
 }
 
 )";
@@ -53,22 +52,23 @@ uniform vec3 object_color;
 uniform vec4 color;
 void main()
 {
-  float ambient_strength = 0.1;
-  vec3 ambient = object_color * ambient_strength;
-
-  vec3 normal = normalize(Normal);
-
+  vec3 norm = normalize(Normal);
   vec3 light_direction = normalize(light_position - Fragment_position);
-  float diff = max(dot(normal, light_direction), 0.0);
+
+  float ambient_strength = 0.2;
+  vec3 ambient =  ambient_strength * object_color;
+
+  float diff = max(dot(norm, light_direction), 0.0);
   vec3 diffuse = diff * light_color;
 
+  float shininess = 8;
   float specular_strength = 0.5;
   vec3 view_direction = normalize(view_position - Fragment_position);
-  vec3 reflect_direction = reflect(-light_direction, normal);
-  float spec = pow(max(dot(view_direction, reflect_direction), 0.0), 32);
+  vec3 reflect_direction = reflect(-light_direction, norm);
+  float spec = pow(max(dot(view_direction, reflect_direction), 0.0), shininess);
   vec3 specular = specular_strength * spec * light_color;
 
-  vec3 result = (ambient + diffuse + specular) * object_color;
+  vec3 result = (ambient + diffuse + specular ) * object_color;
 
   Fragment_color = vec4(result, 1.0);
 }
