@@ -1,14 +1,21 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
+#include <glm/vec3.hpp>
 #include "Chunk.h"
 
 namespace world {
-struct World
+class World final
 {
-  std::vector<Chunk> chunks;
-};
+public:
+  void build() noexcept;
 
-[[nodiscard]] World generate_world() noexcept;
+  const Chunk &get_chunk_at(const glm::vec3 &position) const noexcept;
+  std::vector<Chunk> get_chunks_around(const glm::vec3 &position, unsigned int radius) const noexcept;
+
+private:
+  std::unordered_map<int, Chunk> _chunks;
+};
 
 }// namespace world

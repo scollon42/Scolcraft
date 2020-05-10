@@ -1,8 +1,10 @@
 #include "Camera.h"
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <spdlog/spdlog.h>
+#include <World/World.h>
 
-constexpr auto CAMERA_BASE_SPEED = 8.0f;
+constexpr auto CAMERA_BASE_SPEED = 10.0f;
 constexpr auto CAMERA_SENSITIVITY{ 0.03f };
 
 Camera::Camera(inputs::InputManager &input_manager, const glm::vec3 &start_position)
@@ -44,18 +46,14 @@ glm::vec3 Camera::get_position() const noexcept
 
 glm::mat4 Camera::get_view_matrix() const noexcept
 {
-  glm::mat4 view{ 1.0f };
-  view = glm::lookAt(_position, _position + _front, camera::CAMERA_UP);
-  return view;
+  return glm::lookAt(_position, _position + _front, camera::CAMERA_UP);
 }
 
 void Camera::update(float time_elapsed) noexcept
 {
-  const auto speed = CAMERA_BASE_SPEED * static_cast<float>(time_elapsed);
+  spdlog::info("Position is {}, {}, {}", _position.x, _position.y, _position.z);
 
-  if (_input_manager.is_pressed(GLFW_KEY_L)) {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  }
+  const auto speed = CAMERA_BASE_SPEED * static_cast<float>(time_elapsed);
 
   if (_input_manager.is_pressed(GLFW_KEY_W)) {
     _position += speed * _front;

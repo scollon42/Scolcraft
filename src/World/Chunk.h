@@ -9,20 +9,20 @@
 namespace world {
 
 constexpr auto CHUNK_SIZE_X = 16;
-constexpr auto CHUNK_SIZE_Y = 256;
+constexpr auto CHUNK_SIZE_Y = 16;
 constexpr auto CHUNK_SIZE_Z = 16;
 
 struct Chunk
 {
-  Chunk(unsigned int id, const glm::vec3 &position);
+  Chunk(int id, const glm::vec3 &position);
 
-  unsigned int id;
+  int id;
   glm::vec3 position;
   std::vector<Block> blocks;
   //  renderer::Mesh mesh;
 };
 
-[[nodiscard]] world::Chunk generate_chunk(unsigned int id, const glm::vec3 &position);
+[[nodiscard]] world::Chunk generate_chunk(int id, const glm::vec3 &position);
 
 [[nodiscard]] glm::vec3 absolute_block_position(const Chunk &chunk, const Block &block) noexcept;
 [[nodiscard]] glm::vec3 relative_block_position(const world::Chunk &chunk, const world::Block &block) noexcept;
