@@ -47,7 +47,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
   world.build();
 
   float last_frame_time{ 0 };
-  auto last_camera_position = glm::vec3{ 0.0f };
+
+  for (const auto &chunk : world.get_chunks_around(camera.get_position(), 8)) {
+    const auto &mesh = world::get_chunk_mesh(chunk);
+    chunk_renderer->update_mesh(chunk.id, mesh);
+  }
+
   while (!window->should_close()) {
     const float current_frame_time{ static_cast<float>(glfwGetTime()) };
     const float time_elapsed = current_frame_time - last_frame_time;
@@ -56,7 +61,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     display_ms_per_frame(time_elapsed);
 
     camera.update(time_elapsed);
-
 
     if (input_manager->is_pressed(GLFW_KEY_ESCAPE)) {
       glfwSetWindowShouldClose(window->get_window_ptr(), true);
@@ -69,18 +73,6 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
     if (input_manager->is_pressed(GLFW_KEY_F)) {
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-
-
-    if (last_camera_position != camera.get_position()) {
-      //      chunk_renderer->clear_mesh();
-      for (const auto &chunk : world.get_chunks_around(camera.get_position(), 1)) {
-        const auto &mesh = world::get_chunk_mesh(chunk);
-        chunk_renderer->update_mesh(chunk.id, mesh);
-      }
-
-      last_camera_position = camera.get_position();
-    }
-
 
     program.use();
 

@@ -65,5 +65,5 @@ void Window::swap_buffers() const noexcept
 
 glm::mat4 Window::get_screen_projection() const noexcept
 {
-  return glm::perspective(glm::radians(45.0f), static_cast<float>(_width) / static_cast<float>(_height), 0.1f, 100.0f);
+  return glm::perspective(glm::radians(45.0f), static_cast<float>(_width) / static_cast<float>(_height), 0.1f, 200.0f);
 }

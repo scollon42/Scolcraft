@@ -51,8 +51,6 @@ glm::mat4 Camera::get_view_matrix() const noexcept
 
 void Camera::update(float time_elapsed) noexcept
 {
-  spdlog::info("Position is {}, {}, {}", _position.x, _position.y, _position.z);
-
   const auto speed = CAMERA_BASE_SPEED * static_cast<float>(time_elapsed);
 
   if (_input_manager.is_pressed(GLFW_KEY_W)) {

@@ -14,15 +14,15 @@ constexpr auto CHUNK_SIZE_Z = 16;
 
 struct Chunk
 {
-  Chunk(int id, const glm::vec3 &position);
+  Chunk(int id, const glm::vec2 &position);
 
   int id;
-  glm::vec3 position;
+  glm::vec2 position;
   std::vector<Block> blocks;
   //  renderer::Mesh mesh;
 };
 
-[[nodiscard]] world::Chunk generate_chunk(int id, const glm::vec3 &position);
+[[nodiscard]] world::Chunk generate_chunk(int id, const glm::vec2 &position);
 
 [[nodiscard]] glm::vec3 absolute_block_position(const Chunk &chunk, const Block &block) noexcept;
 [[nodiscard]] glm::vec3 relative_block_position(const world::Chunk &chunk, const world::Block &block) noexcept;
