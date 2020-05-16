@@ -6,7 +6,18 @@ add_executable(game
         Shaders/DefaultProgram.cpp
         Shaders/ShaderLoader.cpp
         Utils/PerlinNoise.cpp
-        World/World.cpp World/World.h World/Block.cpp World/Block.h World/Chunk.cpp World/Chunk.h Renderer/Mesh.cpp Renderer/Mesh.h Renderer/Vertex.cpp Renderer/Vertex.h Renderer/ChunkRenderer.cpp Renderer/ChunkRenderer.h Camera.cpp Camera.h Inputs/InputManager.cpp Inputs/InputManager.h Window.cpp Window.h)
+        World/World.cpp
+        World/Block.cpp
+        World/Chunk.cpp
+        Renderer/Mesh.cpp
+        Renderer/Vertex.cpp
+        Renderer/ChunkRenderer.cpp
+        Renderer/ChunkMeshBuilder.cpp
+        Renderer/BlockFace.cpp
+        Camera.cpp
+        Inputs/InputManager.cpp
+        Window.cpp
+        )
 
 target_include_directories(game PRIVATE .)
 

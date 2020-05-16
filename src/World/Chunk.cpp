@@ -3,8 +3,9 @@
 #include <spdlog/spdlog.h>
 #include <glm/glm.hpp>
 
-#include "Utils/PerlinNoise.h"
-#include "Renderer/Mesh.h"
+#include <Utils/PerlinNoise.h>
+#include <Renderer/Mesh.h>
+#include <Renderer/BlockFace.h>
 
 double noise_at(float x, float z) noexcept
 {
@@ -81,101 +82,4 @@ const world::Block &world::absolute_block_at(const world::Chunk &chunk, const gl
   }
 
   return chunk.blocks.at(index);
-}
-
-renderer::Mesh world::get_chunk_mesh(const world::Chunk &chunk) noexcept
-{
-  renderer::Mesh mesh{};
-  //FIXME this is ugly as fuck
-  //  data.reserve(world::CHUNK_SIZE_X * world::CHUNK_SIZE_Y * world::CHUNK_SIZE_Z * world::BLOCK_SIZE * world::BLOCK_SIZE);
-  for (const auto &block : chunk.blocks) {
-    if (!world::is_visible_block_type(block.type)) {
-      //      spdlog::info("Chunk [{}] : Block at [{}, {}, {}] is not visible.", chunk.id, block.position.x, block.position.y, block.position.z);
-      continue;
-    }
-
-    if (!(block.position.x - 1 < 0
-          || block.position.y - 1 < 0
-          || block.position.z - 1 < 0
-          || block.position.x + 1 >= CHUNK_SIZE_X
-          || block.position.y + 1 >= CHUNK_SIZE_Y
-          || block.position.z + 1 >= CHUNK_SIZE_Z)) {
-
-      const auto &neighbour1 = chunk.blocks.at(static_cast<std::size_t>((block.position.x - 1) + CHUNK_SIZE_X * (block.position.y + CHUNK_SIZE_Y * block.position.z)));
-      const auto &neighbour2 = chunk.blocks.at(static_cast<std::size_t>((block.position.x + 1) + CHUNK_SIZE_X * (block.position.y + CHUNK_SIZE_Y * block.position.z)));
-      const auto &neighbour3 = chunk.blocks.at(static_cast<std::size_t>(block.position.x + CHUNK_SIZE_X * (block.position.y - 1 + CHUNK_SIZE_Y * block.position.z)));
-      const auto &neighbour4 = chunk.blocks.at(static_cast<std::size_t>(block.position.x + CHUNK_SIZE_X * (block.position.y + 1 + CHUNK_SIZE_Y * block.position.z)));
-      const auto &neighbour5 = chunk.blocks.at(static_cast<std::size_t>(block.position.x + CHUNK_SIZE_X * (block.position.y + CHUNK_SIZE_Y * (block.position.z - 1))));
-      const auto &neighbour6 = chunk.blocks.at(static_cast<std::size_t>(block.position.x + CHUNK_SIZE_X * (block.position.y + CHUNK_SIZE_Y * (block.position.z + 1))));
-
-      if (neighbour1.type == BlockType::DIRT
-          && neighbour2.type == BlockType::DIRT
-          && neighbour3.type == BlockType::DIRT
-          && neighbour4.type == BlockType::DIRT
-          && neighbour5.type == BlockType::DIRT
-          && neighbour6.type == BlockType::DIRT) {
-        //        spdlog::info("Chunk [{}] : Block at [{}, {}, {}] should not be drawn", chunk.id, block.position.x, block.position.y, block.position.z);
-        continue;
-      }
-    }
-
-    mesh.insert_vertex_data(world::get_block_vertex_data(chunk, block));
-  }
-
-  return mesh;
-}
-
-std::vector<renderer::Vertex> world::get_block_vertex_data(const world::Chunk &chunk, const world::Block &block)
-{
-  std::vector<renderer::Vertex> block_vertex_data{};
-  const auto block_position = glm::vec3{
-    chunk.position.x * CHUNK_SIZE_X + block.position.x,
-    0 * CHUNK_SIZE_Y + block.position.y,
-    chunk.position.y * CHUNK_SIZE_Z + block.position.z
-  };
-
-  //negative x
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { -1, 0, 0 } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { -1, 0, 0 } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { -1, 0, 0 } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { -1, 0, 0 } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { -1, 0, 0 } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { -1, 0, 0 } });
-  // positive x
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
-  //negative y
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
-  //positive y
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
-  //negative z
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  //  //positive z
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-
-  return block_vertex_data;
 }

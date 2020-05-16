@@ -31,8 +31,4 @@ struct Chunk
 
 [[nodiscard]] const Block &absolute_block_at(const Chunk &chunk, const glm::vec3 &position);
 
-[[nodiscard]] renderer::Mesh get_chunk_mesh(const world::Chunk &chunk) noexcept;
-
-[[nodiscard]] std::vector<renderer::Vertex> get_block_vertex_data(const world::Chunk &chunk, const world::Block &block);
-
 }// namespace world
