@@ -9,6 +9,7 @@
 #include <Camera.h>
 #include <Inputs/InputManager.h>
 #include <Window.h>
+#include <Renderer/ChunkMeshBuilder.h>
 
 inline void display_ms_per_frame(float time_elapsed) noexcept
 {
@@ -48,8 +49,8 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] const char **argv)
 
   float last_frame_time{ 0 };
 
-  for (const auto &chunk : world.get_chunks_around(camera.get_position(), 8)) {
-    const auto &mesh = world::get_chunk_mesh(chunk);
+  for (const auto &chunk : world.get_chunks_around(camera.get_position(), 10)) {
+    const auto &mesh = renderer::ChunkMeshBuilder::get_mesh(chunk);
     chunk_renderer->update_mesh(chunk.id, mesh);
   }
 

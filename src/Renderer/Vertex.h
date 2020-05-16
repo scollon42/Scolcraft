@@ -5,7 +5,7 @@
 namespace renderer {
 struct Vertex final
 {
-  float vertex[3];
-  float normal[3];
+  glm::vec3 vertex;
+  glm::vec3 normal;
 };
 }// namespace renderer
