@@ -21,7 +21,7 @@ renderer::ChunkRenderer::~ChunkRenderer()
   glDeleteVertexArrays(1, &_vertex_array_id);
 }
 
-void renderer::ChunkRenderer::update_mesh(unsigned int chunk_id, const renderer::Mesh &mesh) noexcept
+void renderer::ChunkRenderer::update_mesh(int chunk_id, const renderer::Mesh &mesh) noexcept
 {
   const auto &built_mesh_buffer{ _built_meshes_ids.find(chunk_id) };
   if (built_mesh_buffer != _built_meshes_ids.end()) {
@@ -42,7 +42,7 @@ void renderer::ChunkRenderer::update_mesh(unsigned int chunk_id, const renderer:
   _meshes.insert_or_assign(chunk_id, mesh);
 }
 
-void renderer::ChunkRenderer::delete_mesh(unsigned int chunk_id) noexcept
+void renderer::ChunkRenderer::delete_mesh(int chunk_id) noexcept
 {
   const auto &built_mesh_buffer{ _built_meshes_ids.find(chunk_id) };
   if (built_mesh_buffer != _built_meshes_ids.end()) {
@@ -52,6 +52,12 @@ void renderer::ChunkRenderer::delete_mesh(unsigned int chunk_id) noexcept
     _meshes.erase(chunk_id);
     _built_meshes_ids.erase(chunk_id);
   }
+}
+
+void renderer::ChunkRenderer::clear_mesh() noexcept
+{
+  _meshes.clear();
+  _built_meshes_ids.clear();
 }
 
 void renderer::ChunkRenderer::render() const noexcept

@@ -10,26 +10,20 @@ double noise_at(float x, float z) noexcept
 {
   static siv::PerlinNoise perlin{ 42 };
   static const std::int32_t octave = 16;
-  static const double fx{ 1024 };
-  static const double fz{ 1024 };
+  static const double fx{ world::CHUNK_SIZE_Y * 4 };
+  static const double fz{ world::CHUNK_SIZE_Y * 4 };
 
   return perlin.accumulatedOctaveNoise3D_0_1(static_cast<double>(x) / fx, 0, static_cast<double>(z) / fz, octave);
 }
 
-world::Chunk::Chunk(unsigned int id, const glm::vec3 &position)
+world::Chunk::Chunk(int id, const glm::vec2 &position)
   : id(id), position(position)
 {
 }
 
-world::Chunk world::generate_chunk(unsigned int id, const glm::vec3 &position)
+world::Chunk world::generate_chunk(int id, const glm::vec2 &position)
 {
   world::Chunk chunk{ id, position };
-
-  constexpr auto BLOCK_CHUNK_SIZE = CHUNK_SIZE_X * CHUNK_SIZE_Y * CHUNK_SIZE_Z;
-
-  std::vector<vertex_data> chunk_vertices{};
-
-  chunk_vertices.reserve(BLOCK_CHUNK_SIZE);
 
   //filling vertex buffer dude
   for (int z = 0; z < CHUNK_SIZE_Z; z++) {
@@ -61,8 +55,8 @@ glm::vec3 world::absolute_block_position(const world::Chunk &chunk, const world:
 {
   return glm::vec3{
     chunk.position.x * CHUNK_SIZE_X + block.position.x,
-    chunk.position.y * CHUNK_SIZE_Y + block.position.y,
-    chunk.position.z * CHUNK_SIZE_Z + block.position.z
+    0 * CHUNK_SIZE_Y + block.position.y,
+    chunk.position.y * CHUNK_SIZE_Z + block.position.z
   };
 }
 
@@ -76,8 +70,8 @@ const world::Block &world::absolute_block_at(const world::Chunk &chunk, const gl
 {
   const glm::vec3 relative_position{
     position.x - chunk.position.x - CHUNK_SIZE_X,
-    position.y - chunk.position.y - CHUNK_SIZE_Y,
-    position.z - chunk.position.z - CHUNK_SIZE_Z
+    position.y - 0 - CHUNK_SIZE_Y,
+    position.z - chunk.position.y - CHUNK_SIZE_Z
   };
 
   const auto index = static_cast<std::size_t>(relative_position.z * CHUNK_SIZE_Z + relative_position.y * CHUNK_SIZE_Y + relative_position.y);
@@ -136,52 +130,52 @@ std::vector<renderer::Vertex> world::get_block_vertex_data(const world::Chunk &c
   std::vector<renderer::Vertex> block_vertex_data{};
   const auto block_position = glm::vec3{
     chunk.position.x * CHUNK_SIZE_X + block.position.x,
-    chunk.position.y * CHUNK_SIZE_Y + block.position.y,
-    chunk.position.z * CHUNK_SIZE_Z + block.position.z
+    0 * CHUNK_SIZE_Y + block.position.y,
+    chunk.position.y * CHUNK_SIZE_Z + block.position.z
   };
 
   //negative x
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, chunk.position.z * CHUNK_SIZE_Z + block.position.z }, { -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, chunk.position.z * CHUNK_SIZE_Z + block.position.z + 1 }, { -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, chunk.position.z * CHUNK_SIZE_Z + block.position.z }, { -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, chunk.position.z * CHUNK_SIZE_Z + block.position.z }, { -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, chunk.position.z * CHUNK_SIZE_Z + block.position.z + 1 }, { -1, 0, 0 } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, chunk.position.z * CHUNK_SIZE_Z + block.position.z + 1 }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { -1, 0, 0 } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { -1, 0, 0 } });
   // positive x
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 1.0f, 0.0f, 0.0f } });
   //negative y
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, -1.0f, 0.0f } });
   //positive y
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 1.0f, 0.0f } });
   //negative z
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z }, { 0.0f, 0.0f, -1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z }, { 0.0f, 0.0f, -1.0f } });
   //  //positive z
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
-  block_vertex_data.emplace_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
+  block_vertex_data.push_back(renderer::Vertex{ { block_position.x + 1, block_position.y + 1, block_position.z + 1 }, { 0.0f, 0.0f, 1.0f } });
 
   return block_vertex_data;
 }
