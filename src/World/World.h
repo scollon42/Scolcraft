@@ -14,7 +14,7 @@ class World final
 public:
   void build() noexcept;
 
-  [[nodiscard]] const Chunk &get_chunk_at_player(const glm::vec3 &position) const noexcept;
+  [[nodiscard]] const Chunk &      get_chunk_at_player(const glm::vec3 &position) const noexcept;
   [[nodiscard]] std::vector<Chunk> get_chunks_around(const glm::vec3 &position, unsigned int radius) const noexcept;
 
 private:

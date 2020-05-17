@@ -9,7 +9,7 @@ class Mesh final
 {
 public:
   [[nodiscard]] const std::vector<Vertex> &get_vertex_data() const noexcept;
-  [[nodiscard]] int get_vertex_data_size() const noexcept;
+  [[nodiscard]] int                        get_vertex_data_size() const noexcept;
 
 
   void add_vertex(const Vertex &vertex) noexcept;

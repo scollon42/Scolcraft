@@ -8,7 +8,7 @@ namespace renderer {
 struct BlockFace
 {
   std::array<glm::vec3, 6> vertices;
-  glm::vec3 normal;
+  glm::vec3                normal;
 };
 
 constexpr BlockFace LEFT{

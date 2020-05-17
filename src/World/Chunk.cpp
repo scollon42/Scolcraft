@@ -9,10 +9,10 @@
 
 double noise_at(float x, float z) noexcept
 {
-  static siv::PerlinNoise perlin{ 42 };
+  static siv::PerlinNoise   perlin{ 42 };
   static const std::int32_t octave = 16;
-  static const double fx{ world::CHUNK_SIZE_Y * 4 };
-  static const double fz{ world::CHUNK_SIZE_Y * 4 };
+  static const double       fx{ world::CHUNK_SIZE_Y * 4 };
+  static const double       fz{ world::CHUNK_SIZE_Y * 4 };
 
   return perlin.accumulatedOctaveNoise3D_0_1(static_cast<double>(x) / fx, 0, static_cast<double>(z) / fz, octave);
 }

@@ -6,9 +6,9 @@
 // TODO refactor this code
 unsigned int shaders::compile_shader_src(const std::string &src, shaders::ShaderType type)
 {
-  int success = 0;
+  int          success = 0;
   unsigned int id;
-  const char *c_src = src.c_str();
+  const char * c_src = src.c_str();
 
   id = glCreateShader(type == shaders::ShaderType::VERTEX ? GL_VERTEX_SHADER : GL_FRAGMENT_SHADER);
   glShaderSource(id, 1, &c_src, nullptr);

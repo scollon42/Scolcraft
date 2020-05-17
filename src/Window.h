@@ -21,12 +21,12 @@ public:
 
   [[nodiscard]] GLFWwindow *get_window_ptr() const noexcept;
   [[nodiscard]] GLFWwindow &get_window() const noexcept;
-  [[nodiscard]] bool should_close() const noexcept;
-  void swap_buffers() const noexcept;
-  [[nodiscard]] glm::mat4 get_screen_projection() const noexcept;
+  [[nodiscard]] bool        should_close() const noexcept;
+  void                      swap_buffers() const noexcept;
+  [[nodiscard]] glm::mat4   get_screen_projection() const noexcept;
 
 private:
-  int _width;
-  int _height;
+  int                                            _width;
+  int                                            _height;
   std::unique_ptr<GLFWwindow, DestroyGlfwWindow> _window_ptr;
 };

@@ -20,7 +20,7 @@ public:
 
 private:
   inputs::InputManager &_input_manager;
-  glm::vec3 _position;
-  glm::vec3 _front;
-  float _y_position;
+  glm::vec3             _position;
+  glm::vec3             _front;
+  float                 _y_position;
 };

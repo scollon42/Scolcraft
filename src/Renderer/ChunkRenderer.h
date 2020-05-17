@@ -19,8 +19,8 @@ public:
   void render() const noexcept;
 
 private:
-  std::map<int, Mesh> _meshes;
+  std::map<int, Mesh>   _meshes;
   std::map<int, GLuint> _built_meshes_ids;
-  GLuint _vertex_array_id{};
+  GLuint                _vertex_array_id{};
 };
 }// namespace renderer

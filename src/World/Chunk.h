@@ -16,8 +16,8 @@ struct Chunk
 {
   Chunk(int id, const glm::vec2 &position);
 
-  int id;
-  glm::vec2 position;
+  int                id;
+  glm::vec2          position;
   std::vector<Block> blocks;
   //  renderer::Mesh mesh;
 };

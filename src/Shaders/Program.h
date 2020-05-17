@@ -4,7 +4,7 @@
 #include <string>
 
 namespace shaders {
-using shader_id = unsigned int;
+using shader_id  = unsigned int;
 using program_id = unsigned int;
 
 class Program

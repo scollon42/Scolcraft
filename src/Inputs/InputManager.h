@@ -20,7 +20,7 @@ public:
   [[nodiscard]] bool is_pressed(int key_code) const;
 
 private:
-  GLFWwindow &_window;
+  GLFWwindow &                                _window;
   std::vector<std::function<void(glm::vec2)>> _mouse_event_subscribers;
 };
 }// namespace inputs

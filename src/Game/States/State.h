@@ -7,11 +7,11 @@ namespace game::states {
 class State
 {
 public:
-  virtual ~State() = default;
-  virtual void init() = 0;
-  virtual void inputs() = 0;
+  virtual ~State()                        = default;
+  virtual void init()                     = 0;
+  virtual void inputs()                   = 0;
   virtual void update(float elapsed_time) = 0;
-  virtual void render() = 0;
+  virtual void render()                   = 0;
 
   void start() noexcept
   {
@@ -34,7 +34,7 @@ protected:
   }
 
   inputs::InputManager &_input_manager;
-  Window &_window;
-  bool _is_running = false;
+  Window &              _window;
+  bool                  _is_running = false;
 };
 }// namespace game::states

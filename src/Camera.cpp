@@ -16,8 +16,8 @@ Camera::Camera(inputs::InputManager &input_manager, const glm::vec3 &start_posit
   _input_manager.subscribe_to_mouse_event([&](const glm::vec2 &mouse_position) {
     static float yaw{ 0 };
     static float pitch{ 0 };
-    static auto last_x_position{ mouse_position.x };
-    static auto last_y_position{ mouse_position.y };
+    static auto  last_x_position{ mouse_position.x };
+    static auto  last_y_position{ mouse_position.y };
 
     const auto x_offset = (mouse_position.x - last_x_position) * CAMERA_SENSITIVITY;
     const auto y_offset = (last_y_position - mouse_position.y) * CAMERA_SENSITIVITY;//reverse to have natural mouse movement on y axis

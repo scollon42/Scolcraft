@@ -6,14 +6,14 @@
 inline void display_ms_per_frame(float time_elapsed) noexcept
 {
   static unsigned int frame_count{ 0 };
-  static auto accumulated_time{ 0.0f };
+  static auto         accumulated_time{ 0.0f };
 
   accumulated_time += time_elapsed;
   frame_count++;
   if (accumulated_time >= 1.0f) {
     spdlog::info("Ms per frame [{} (~= {} fps)]", 1000.0 / static_cast<double>(frame_count), frame_count);
 
-    frame_count = 0;
+    frame_count      = 0;
     accumulated_time = 1.0f - accumulated_time;
   }
 }
@@ -32,7 +32,7 @@ void game::Game::init()
   _current_state_index = 0;
 }
 
-void game::Game::loop()
+void game::Game::run()
 {
   spdlog::info("Starting main run");
   float last_frame_time{ 0 };
@@ -48,7 +48,7 @@ void game::Game::loop()
 
       const float current_frame_time{ static_cast<float>(glfwGetTime()) };
       const float time_elapsed = current_frame_time - last_frame_time;
-      last_frame_time = current_frame_time;
+      last_frame_time          = current_frame_time;
 
       display_ms_per_frame(time_elapsed);
 

@@ -19,8 +19,8 @@ public:
 
 private:
   std::unique_ptr<renderer::ChunkRenderer> _chunk_renderer;
-  Camera _camera;
-  world::World _world;
-  shaders::DefaultProgram _program;
+  Camera                                   _camera;
+  world::World                             _world;
+  shaders::DefaultProgram                  _program;
 };
 }// namespace game::states

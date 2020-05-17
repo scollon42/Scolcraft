@@ -45,9 +45,9 @@ void game::states::MainState::render()
 {
   _program.use();
 
-  const auto &view_position_location = glGetUniformLocation(_program.get_id(), "view_position");
-  const auto &object_color_location = glGetUniformLocation(_program.get_id(), "object_color");
-  const auto &light_color_location = glGetUniformLocation(_program.get_id(), "light_color");
+  const auto &view_position_location  = glGetUniformLocation(_program.get_id(), "view_position");
+  const auto &object_color_location   = glGetUniformLocation(_program.get_id(), "object_color");
+  const auto &light_color_location    = glGetUniformLocation(_program.get_id(), "light_color");
   const auto &light_position_location = glGetUniformLocation(_program.get_id(), "light_position");
 
   glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 0.87f, 0.10f)));

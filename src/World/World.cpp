@@ -32,7 +32,7 @@ std::vector<world::Chunk> world::World::get_chunks_around(const glm::vec3 &posit
   const auto current_chunk{ get_chunk_at_player(position) };
   chunks.push_back(current_chunk);
   const auto current_chunk_position = current_chunk.position;
-  const int rad = static_cast<int>(radius);
+  const int  rad                    = static_cast<int>(radius);
 
   for (int x = -rad; x < rad; x++) {
     for (int y = -rad; y < rad; y++) {

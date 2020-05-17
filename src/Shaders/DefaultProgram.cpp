@@ -7,8 +7,8 @@
 #include <string>
 
 namespace uniforms {
-constexpr auto MODEL_LOCATION = "model";
-constexpr auto VIEW_LOCATION = "view";
+constexpr auto MODEL_LOCATION      = "model";
+constexpr auto VIEW_LOCATION       = "view";
 constexpr auto PROJECTION_LOCATION = "projection";
 }// namespace uniforms
 
@@ -85,7 +85,7 @@ shaders::DefaultProgram shaders::DefaultProgram::build()
 {
   shaders::DefaultProgram program{};
 
-  const auto &vertex_shader_id = shaders::compile_shader_src(vertex_shader_src, shaders::ShaderType::VERTEX);
+  const auto &vertex_shader_id   = shaders::compile_shader_src(vertex_shader_src, shaders::ShaderType::VERTEX);
   const auto &fragment_shader_id = shaders::compile_shader_src(fragment_shader_src, shaders::ShaderType::FRAGMENT);
 
   program.attach_shader(vertex_shader_id);

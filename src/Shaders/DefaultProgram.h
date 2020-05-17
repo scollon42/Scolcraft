@@ -11,7 +11,7 @@ class DefaultProgram : public Program
 public:
   static DefaultProgram build();
 
-  program_id get_id() const noexcept
+  [[nodiscard]] program_id get_id() const noexcept
   {
     return id;
   }
