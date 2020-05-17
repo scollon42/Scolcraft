@@ -15,15 +15,15 @@ public:
 
   void init();
 
-  void run();
+  void loop();
 
   void stop();
 
 private:
-  std::size_t                                       _current_state_index;
+  std::size_t _current_state_index;
   std::vector<std::unique_ptr<game::states::State>> _states;
-  std::unique_ptr<Window>                           _window        = nullptr;
-  std::unique_ptr<inputs::InputManager>             _input_manager = nullptr;
+  std::unique_ptr<Window> _window = nullptr;
+  std::unique_ptr<inputs::InputManager> _input_manager = nullptr;
 
   [[nodiscard]] inline bool should_run() const noexcept
   {

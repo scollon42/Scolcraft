@@ -18,7 +18,7 @@ function(set_project_warnings project_name)
             # virtual instances of this class may not be destructed correctly
             /w14287 # 'operator': unsigned/negative constant mismatch
             /we4289 # nonstandard extension used: 'variable': run control variable
-            # declared in the for-run is used outside the for-run scope
+            # declared in the for-loop is used outside the for-run scope
             /w14296 # 'operator': expression is always 'boolean_value'
             /w14311 # 'variable': pointer truncation from 'type1' to 'type2'
             /w14545 # expression before comma evaluates to a function which is missing
