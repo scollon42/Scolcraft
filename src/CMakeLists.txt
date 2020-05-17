@@ -2,7 +2,8 @@
 
 add_executable(game
         main.cpp
-        Game.cpp
+        Game/Game.cpp
+        Game/States/MainState.cpp
         Shaders/Program.cpp
         Shaders/DefaultProgram.cpp
         Shaders/ShaderLoader.cpp

@@ -1,13 +1,11 @@
 #pragma once
 
 #include <memory>
-#include <Renderer/ChunkRenderer.h>
 #include <Window.h>
 #include <Inputs/InputManager.h>
-#include <Camera.h>
-#include <World/World.h>
-#include <Shaders/DefaultProgram.h>
+#include <Game/States/State.h>
 
+namespace game {
 class Game
 {
 public:
@@ -22,19 +20,14 @@ public:
   void stop();
 
 private:
+  std::size_t _current_state_index;
+  std::vector<std::unique_ptr<game::states::State>> _states;
   std::unique_ptr<Window> _window = nullptr;
   std::unique_ptr<inputs::InputManager> _input_manager = nullptr;
-  std::unique_ptr<renderer::ChunkRenderer> _chunk_renderer = nullptr;
-  Camera _camera;
-  world::World _world;
-  shaders::DefaultProgram _program;
 
-  void inputs();
-  void update(const float time_elapsed);
-  void render();
-
-  inline bool should_run() const noexcept
+  [[nodiscard]] inline bool should_run() const noexcept
   {
     return !_window->should_close();
   }
 };
+}// namespace game
