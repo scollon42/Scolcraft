@@ -24,11 +24,32 @@ struct Chunk
 
 [[nodiscard]] world::Chunk generate_chunk(int id, const glm::vec2 &position);
 
-[[nodiscard]] glm::vec3 absolute_block_position(const Chunk &chunk, const Block &block) noexcept;
-[[nodiscard]] glm::vec3 relative_block_position(const world::Chunk &chunk, const world::Block &block) noexcept;
+[[nodiscard]] std::vector<Block> get_neighbours_blocks(const Chunk &chunk, const glm::vec3 &position) noexcept;
 
-[[nodiscard]] bool is_next_to_air_block(const Chunk &chunk, const Block &block) noexcept;
+[[nodiscard]] const Block &get_absolute_block_at(const Chunk &chunk, const glm::vec3 &position);
 
-[[nodiscard]] const Block &absolute_block_at(const Chunk &chunk, const glm::vec3 &position);
+[[nodiscard]] const Block &get_relative_block_at(const Chunk &chunk, const glm::vec3 &position);
+
+[[nodiscard]] inline glm::vec3 to_absolute_position(const Chunk &chunk, glm::vec3 position) noexcept
+{
+  return glm::vec3{
+    chunk.position.x * CHUNK_SIZE_X + position.x,
+    position.y,
+    chunk.position.y * CHUNK_SIZE_Z + position.z
+  };
+}
+[[nodiscard]] inline glm::vec3 to_relative_position(const world::Chunk &chunk, glm::vec3 position) noexcept
+{
+  return glm::vec3{
+    position.x - chunk.position.x - CHUNK_SIZE_X,
+    position.y - CHUNK_SIZE_Y,
+    position.z - chunk.position.y - CHUNK_SIZE_Z
+  };
+}
+
+[[nodiscard]] inline unsigned int get_index_at(const glm::vec3 &position)
+{
+  return static_cast<unsigned int>(position.x + CHUNK_SIZE_X * (position.y + CHUNK_SIZE_Y * position.z));
+}
 
 }// namespace world

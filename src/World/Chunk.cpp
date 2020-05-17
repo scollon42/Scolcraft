@@ -36,7 +36,7 @@ world::Chunk world::generate_chunk(int id, const glm::vec2 &position)
           glm::vec3(x, y, z)
         };
 
-        const auto absolute_position = absolute_block_position(chunk, block);
+        const auto absolute_position = to_absolute_position(chunk, block.position);
 
         const auto height = noise_at(absolute_position.x, absolute_position.z) * CHUNK_SIZE_Y;
 
@@ -52,33 +52,30 @@ world::Chunk world::generate_chunk(int id, const glm::vec2 &position)
   return chunk;
 }
 
-glm::vec3 world::absolute_block_position(const world::Chunk &chunk, const world::Block &block) noexcept
+std::vector<world::Block> world::get_neighbours_blocks(const world::Chunk &chunk, const glm::vec3 &position) noexcept
 {
-  return glm::vec3{
-    chunk.position.x * CHUNK_SIZE_X + block.position.x,
-    0 * CHUNK_SIZE_Y + block.position.y,
-    chunk.position.y * CHUNK_SIZE_Z + block.position.z
+  return {
+    get_relative_block_at(chunk, position + glm::vec3{ -1, 0, 0 }),
+    get_relative_block_at(chunk, position + glm::vec3{ 1, 0, 0 }),
+    get_relative_block_at(chunk, position + glm::vec3{ 0, -1, 0 }),
+    get_relative_block_at(chunk, position + glm::vec3{ 0, 1, 0 }),
+    get_relative_block_at(chunk, position + glm::vec3{ 0, 0, -1 }),
+    get_relative_block_at(chunk, position + glm::vec3{ 0, 0, 1 })
   };
 }
 
-bool world::is_next_to_air_block([[maybe_unused]] const world::Chunk &chunk, [[maybe_unused]] const world::Block &block) noexcept
+const world::Block &world::get_absolute_block_at(const world::Chunk &chunk, const glm::vec3 &position)
 {
-  spdlog::error("world::is_next_to_air_block : Not implemented.");
-  return false;
+  return get_relative_block_at(chunk, to_relative_position(chunk, position));
 }
 
-const world::Block &world::absolute_block_at(const world::Chunk &chunk, const glm::vec3 &position)
+const world::Block &world::get_relative_block_at(const world::Chunk &chunk, const glm::vec3 &position)
 {
-  const glm::vec3 relative_position{
-    position.x - chunk.position.x - CHUNK_SIZE_X,
-    position.y - 0 - CHUNK_SIZE_Y,
-    position.z - chunk.position.y - CHUNK_SIZE_Z
-  };
+  const auto index{ get_index_at(position) };
 
-  const auto index = static_cast<std::size_t>(relative_position.z * CHUNK_SIZE_Z + relative_position.y * CHUNK_SIZE_Y + relative_position.y);
-
-  if (index > chunk.blocks.size()) {
-    throw std::runtime_error(fmt::format("Chunk [{}] : Block don't exists at absolute position [{}, {}, {}]", chunk.id, position.x, position.y, position.z));
+  if (index >= chunk.blocks.size()) {
+    spdlog::warn("Chunk [{}] : Block don't exists at absolute position [{}, {}, {}]", chunk.id, position.x, position.y, position.z);
+    return world::DEFAULT_BLOCK;
   }
 
   return chunk.blocks.at(index);
