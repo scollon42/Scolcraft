@@ -4,9 +4,6 @@ add_executable(game
         main.cpp
         Game/Game.cpp
         Game/States/MainState.cpp
-        Shaders/Program.cpp
-        Shaders/DefaultProgram.cpp
-        Shaders/ShaderLoader.cpp
         Utils/PerlinNoise.cpp
         World/World.cpp
         World/Block.cpp
@@ -19,7 +16,9 @@ add_executable(game
         Camera.cpp
         Inputs/InputManager.cpp
         Window.cpp
-        )
+        Shaders/Shader.cpp
+        Shaders/ShaderBuilder.cpp
+        Shaders/DefaultShader.cpp)
 
 target_include_directories(game PRIVATE .)
 

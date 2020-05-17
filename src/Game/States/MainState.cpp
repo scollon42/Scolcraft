@@ -7,7 +7,7 @@ game::states::MainState::MainState(inputs::InputManager &input_manager, Window &
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera(_input_manager, { 5, 10, 5 }),
     _world({}),
-    _program(shaders::DefaultProgram::build())
+    _shader(std::make_unique<shaders::DefaultShader>(shaders::DefaultShader::create()))
 {
 }
 
@@ -43,23 +43,16 @@ void game::states::MainState::update(float elapsed_time)
 
 void game::states::MainState::render()
 {
-  _program.use();
+  _shader->bind();
 
-  const auto &view_position_location  = glGetUniformLocation(_program.get_id(), "view_position");
-  const auto &object_color_location   = glGetUniformLocation(_program.get_id(), "object_color");
-  const auto &light_color_location    = glGetUniformLocation(_program.get_id(), "light_color");
-  const auto &light_position_location = glGetUniformLocation(_program.get_id(), "light_position");
-
-  glUniform3fv(object_color_location, 1, glm::value_ptr(glm::vec3(0.11f, 0.87f, 0.10f)));
-  glUniform3fv(light_color_location, 1, glm::value_ptr(glm::vec3(0.5f * sinf(static_cast<float>(glfwGetTime())), 1.0f, 0.5f * cosf(static_cast<float>(glfwGetTime())))));
-  glUniform3fv(light_position_location, 1, glm::value_ptr(glm::vec3(0.0f, 256.0f, 0.0f)));
-  glUniform3fv(view_position_location, 1, glm::value_ptr(_camera.get_position()));
-
-  _program.set_view_uniform(_camera.get_view_matrix());
-  _program.set_projection_uniform(_window.get_screen_projection());
-
-  glm::mat4 model{ 1.0f };
-  _program.set_model_uniform(model);
+  _shader->set_object_color(glm::vec3(0.11f, 0.87f, 0.10f));
+  _shader->set_light_color(glm::vec3(0.5f * sinf(static_cast<float>(glfwGetTime())), 1.0f, 0.5f * cosf(static_cast<float>(glfwGetTime()))));
+  _shader->set_light_position(glm::vec3(0.0f, 256.0f, 0.0f));
+  _shader->set_view_position(_camera.get_position());
+  _shader->set_view(_camera.get_view_matrix());
+  _shader->set_projection(_window.get_screen_projection());
+  _shader->set_model(glm::mat4{ 1.0f });
 
   _chunk_renderer->render();
+  _shader->unbind();
 }
