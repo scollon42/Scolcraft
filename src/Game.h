@@ -29,6 +29,10 @@ private:
   world::World _world;
   shaders::DefaultProgram _program;
 
+  void inputs();
+  void update(const float time_elapsed);
+  void render();
+
   inline bool should_run() const noexcept
   {
     return !_window->should_close();
