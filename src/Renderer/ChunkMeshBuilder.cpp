@@ -15,6 +15,7 @@ renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const world::Chunk &chunk) n
     const auto &neighbours = world::get_neighbours_blocks(chunk, block.position);
 
     bool should_be_drawn = false;
+
     for (const auto &neighbour : neighbours) {
       if (!world::is_visible_block_type(neighbour.type)) {
         should_be_drawn = true;

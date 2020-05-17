@@ -16,7 +16,7 @@ struct DestroyGlfwWindow
 class Window
 {
 public:
-  Window(int width, int height);
+  Window(int width, int height, const std::string &title);
   ~Window();
 
   [[nodiscard]] GLFWwindow *get_window_ptr() const noexcept;

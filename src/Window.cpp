@@ -9,7 +9,7 @@ void framebuffer_size_callback([[maybe_unused]] GLFWwindow *window, int width, i
 }
 
 
-Window::Window(int width, int height)
+Window::Window(int width, int height, const std::string &title)
   : _width(width), _height(height), _window_ptr(nullptr)
 {
   spdlog::info("Creating window.");
@@ -22,7 +22,7 @@ Window::Window(int width, int height)
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  _window_ptr.reset(glfwCreateWindow(_width, _height, "ScolCraft", nullptr, nullptr));
+  _window_ptr.reset(glfwCreateWindow(_width, _height, title.data(), nullptr, nullptr));
 
   if (_window_ptr == nullptr) {
     spdlog::error("Failed to create GLFW window");

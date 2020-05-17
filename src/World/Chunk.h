@@ -47,9 +47,9 @@ struct Chunk
   };
 }
 
-[[nodiscard]] inline unsigned int get_index_at(const glm::vec3 &position)
+[[nodiscard]] inline int get_index_at(const glm::vec3 &position)
 {
-  return static_cast<unsigned int>(position.x + CHUNK_SIZE_X * (position.y + CHUNK_SIZE_Y * position.z));
+  return static_cast<int>(position.x + CHUNK_SIZE_X * (position.y + CHUNK_SIZE_Y * position.z));
 }
 
 }// namespace world

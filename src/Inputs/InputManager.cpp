@@ -15,7 +15,6 @@ inputs::InputManager::InputManager(GLFWwindow &window)
   glfwSetCursorPosCallback(&_window, mouse_pos_callback);
 }
 
-
 void inputs::InputManager::subscribe_to_mouse_event(const std::function<void(glm::vec2)> &callback) noexcept
 {
   _mouse_event_subscribers.push_back(callback);
@@ -27,7 +26,6 @@ void inputs::InputManager::update_mouse_position(const glm::vec2 &mouse_position
     cb(mouse_position);
   }
 }
-
 
 bool inputs::InputManager::is_pressed(int key_code) const
 {
