@@ -74,7 +74,7 @@ const world::Block &world::get_relative_block_at(const world::Chunk &chunk, cons
   const auto index{ get_index_at(position) };
 
   if (index < 0 || static_cast<std::size_t>(index) >= chunk.blocks.size()) {
-    spdlog::warn("Chunk [{}] : Block don't exists at absolute position [{}, {}, {}]", chunk.id, position.x, position.y, position.z);
+    spdlog::debug("Chunk [{}] : Block don't exists at absolute position [{}, {}, {}]", chunk.id, position.x, position.y, position.z);
     return world::DEFAULT_BLOCK;
   }
 

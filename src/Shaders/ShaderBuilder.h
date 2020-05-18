@@ -8,6 +8,7 @@ namespace shaders {
 class ShaderBuilder final
 {
 public:
+  [[nodiscard]] ShaderBuilder &      build() noexcept;
   [[nodiscard]] ShaderBuilder &      add_vertex(const std::string &vertex_src);
   [[nodiscard]] ShaderBuilder &      add_fragment(const std::string &fragment_str);
   [[nodiscard]] const ShaderBuilder &link();

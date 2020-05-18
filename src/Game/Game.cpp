@@ -55,6 +55,7 @@ void game::Game::run()
       current_state.inputs();
       current_state.update(time_elapsed);
       current_state.render();
+
       _window->swap_buffers();
       glfwPollEvents();
     }

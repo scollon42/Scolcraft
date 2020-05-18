@@ -1,5 +1,6 @@
 #include "DefaultShader.h"
 #include <Shaders/ShaderBuilder.h>
+#include <spdlog/spdlog.h>
 
 namespace uniforms {
 constexpr auto MODEL_LOCATION          = "model";
@@ -72,15 +73,22 @@ void main()
 }
 )";
 
-shaders::DefaultShader shaders::DefaultShader::create()
+shaders::DefaultShader *shaders::DefaultShader::create()
 {
-  return DefaultShader{
+  return new shaders::DefaultShader{
     ShaderBuilder()
+      .build()
       .add_vertex(vertex_shader_src)
       .add_fragment(fragment_shader_src)
       .link()
       .get()
   };
+}
+
+shaders::DefaultShader::~DefaultShader()
+{
+  spdlog::info("Destroying shader");
+  destroy();
 }
 
 shaders::DefaultShader::DefaultShader(shaders::Shader &&shader)
@@ -93,9 +101,9 @@ void shaders::DefaultShader::set_model(const glm::mat4 &model) const noexcept
   set_uniform(uniforms::MODEL_LOCATION, model);
 }
 
-void shaders::DefaultShader::set_view(const glm::mat4 &model) const noexcept
+void shaders::DefaultShader::set_view(const glm::mat4 &view) const noexcept
 {
-  set_uniform(uniforms::VIEW_LOCATION, model);
+  set_uniform(uniforms::VIEW_LOCATION, view);
 }
 
 void shaders::DefaultShader::set_projection(const glm::mat4 &model) const noexcept

@@ -7,7 +7,7 @@ game::states::MainState::MainState(inputs::InputManager &input_manager, Window &
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera(_input_manager, { 5, 10, 5 }),
     _world({}),
-    _shader(std::make_unique<shaders::DefaultShader>(shaders::DefaultShader::create()))
+    _shader(shaders::DefaultShader::create())
 {
 }
 
@@ -51,6 +51,8 @@ void game::states::MainState::render()
   _shader->set_view_position(_camera.get_position());
   _shader->set_view(_camera.get_view_matrix());
   _shader->set_projection(_window.get_screen_projection());
+
+  // FIXME: Use model inside of chunk to translate chunk position
   _shader->set_model(glm::mat4{ 1.0f });
 
   _chunk_renderer->render();

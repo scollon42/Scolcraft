@@ -10,6 +10,13 @@ enum class ShaderType {
 
 [[nodiscard]] unsigned int compile_shader_src(const std::string &src, ShaderType type);
 
+
+shaders::ShaderBuilder &shaders::ShaderBuilder::build() noexcept
+{
+  _shader.set_id(glCreateProgram());
+  return *this;
+}
+
 shaders::ShaderBuilder &shaders::ShaderBuilder::add_vertex(const std::string &vertex_src)
 {
   const auto shader_id = compile_shader_src(vertex_src, ShaderType::VERTEX);
@@ -37,6 +44,8 @@ const shaders::ShaderBuilder &shaders::ShaderBuilder::link()
     glGetProgramInfoLog(_shader.get_id(), 512, nullptr, info);
     spdlog::error("Linking shader program failed : [{}]", info);
     throw std::runtime_error("Fail to link shaders");
+  } else {
+    spdlog::info("Program {} was linked successfully", _shader.get_id());
   }
 
   for (const auto &id : _attached_shader_ids) {
