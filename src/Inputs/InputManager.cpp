@@ -1,4 +1,6 @@
 #include "InputManager.h"
+#include <Events/KeyboardEvent.h>
+#include <Events/Dispatcher.h>
 
 void mouse_pos_callback(GLFWwindow *window, double x_position, double y_position)
 {
@@ -8,11 +10,18 @@ void mouse_pos_callback(GLFWwindow *window, double x_position, double y_position
     static_cast<float>(x_position), static_cast<float>(y_position) });
 }
 
+void keyboard_callback([[maybe_unused]] GLFWwindow *window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods)
+{
+  events::KeyboardEvent event{ key, action };
+  events::Dispatcher::get().dispatch<events::KeyboardEvent>(event);
+}
+
 inputs::InputManager::InputManager(GLFWwindow &window)
   : _window(window)
 {
   glfwSetWindowUserPointer(&_window, this);
   glfwSetCursorPosCallback(&_window, mouse_pos_callback);
+  glfwSetKeyCallback(&_window, keyboard_callback);
 }
 
 void inputs::InputManager::subscribe_to_mouse_event(const std::function<void(glm::vec2)> &callback) noexcept

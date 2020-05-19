@@ -18,7 +18,7 @@ add_executable(game
         Window.cpp
         Shaders/Shader.cpp
         Shaders/ShaderBuilder.cpp
-        Shaders/DefaultShader.cpp)
+        Shaders/DefaultShader.cpp Events/Subscriber.h Events/KeyboardEvent.h Events/KeyboardEvent.cpp)
 
 target_include_directories(game PRIVATE .)
 
