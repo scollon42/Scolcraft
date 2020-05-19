@@ -1,5 +1,6 @@
 #include "InputManager.h"
 #include <Events/KeyboardEvent.h>
+#include <Events/MousePositionEvent.h>
 #include <Events/Dispatcher.h>
 
 void mouse_pos_callback(GLFWwindow *window, double x_position, double y_position)
@@ -8,6 +9,9 @@ void mouse_pos_callback(GLFWwindow *window, double x_position, double y_position
 
   input_manager->update_mouse_position(glm::vec2{
     static_cast<float>(x_position), static_cast<float>(y_position) });
+
+  events::MousePositionEvent event{ static_cast<float>(x_position), static_cast<float>(y_position) };
+  events::Dispatcher::get().dispatch<events::MousePositionEvent>(event);
 }
 
 void keyboard_callback([[maybe_unused]] GLFWwindow *window, int key, [[maybe_unused]] int scancode, int action, [[maybe_unused]] int mods)

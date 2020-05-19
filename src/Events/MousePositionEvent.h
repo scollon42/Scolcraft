@@ -3,17 +3,16 @@
 #include <string>
 
 namespace events {
-struct KeyboardEvent final
+struct MousePositionEvent
 {
-  KeyboardEvent(int key, int actions);
+  MousePositionEvent(float x, float y);
 
   [[maybe_unused]] [[nodiscard]] static std::string get_name() noexcept
   {
-    return "KeyboardEvent";
+    return "MousePositionEvent";
   }
 
-  int key;
-  int action;
+  float x;
+  float y;
 };
-
 }// namespace events

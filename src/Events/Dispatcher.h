@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <memory>
 #include <Events/Subscriber.h>
+#include <spdlog/spdlog.h>
 
 namespace events {
 
@@ -23,6 +24,7 @@ public:
 
   ~Dispatcher()
   {
+    spdlog::info("Destroying dispatcher");
     for (const auto &sub_list : _subscribers_map) {
       for (auto sub : sub_list.second) {
         delete sub;
