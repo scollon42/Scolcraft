@@ -2,6 +2,9 @@
 
 #include <spdlog/spdlog.h>
 #include <Game/States/MainState.h>
+#include <Events/Dispatcher.h>
+#include <Events/KeyboardEvent.h>
+#include <Events/MousePositionEvent.h>
 
 inline void display_ms_per_frame(float time_elapsed) noexcept
 {
@@ -38,6 +41,14 @@ void game::Game::run()
   float last_frame_time{ 0 };
 
   game::states::State &current_state{ *_states.at(_current_state_index) };
+
+  events::Dispatcher::get().subscribe<events::KeyboardEvent>([](const events::KeyboardEvent &event) {
+    spdlog::info("EVENT {} HAPPENED with key {} and action {} !!", events::KeyboardEvent::get_name(), event.key, event.action);
+  });
+  events::Dispatcher::get().subscribe<events::MousePositionEvent>([](const events::MousePositionEvent &event) {
+    spdlog::info("EVENT {} HAPPENED [{}, {}] !!", events::MousePositionEvent::get_name(), event.x, event.y);
+  });
+
 
   while (should_run()) {
 
