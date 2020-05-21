@@ -49,9 +49,14 @@ public:
   template<typename T>
   void dispatch(T event)
   {
-    auto subs_list = _subscribers_map.at(T::get_name());
+    auto subs_list = _subscribers_map.find(T::get_name());
 
-    for (const auto &sub : subs_list) {
+    if (subs_list == _subscribers_map.end()) {
+      spdlog::warn("No subscriber for event {}", T::get_name());
+      return;
+    }
+
+    for (const auto &sub : subs_list->second) {
       auto subscriber = static_cast<Subscriber<T> *>(sub);
       subscriber->notify(event);
     }

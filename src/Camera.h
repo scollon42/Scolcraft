@@ -12,15 +12,21 @@ constexpr glm::vec3 CAMERA_FRONT{ glm::vec3(0.0f, 0.0f, -1.0f) };
 class Camera final
 {
 public:
-  Camera(inputs::InputManager &input_manager, const glm::vec3 &start_position);
+  Camera(const glm::vec3 &start_position);
   [[nodiscard]] glm::vec3 get_position() const noexcept;
   [[nodiscard]] glm::mat4 get_view_matrix() const noexcept;
 
   void update(float time_elapsed) noexcept;
 
 private:
-  inputs::InputManager &_input_manager;
-  glm::vec3             _position;
-  glm::vec3             _front;
-  float                 _y_position;
+  // inputs::InputManager &_input_manager;
+  glm::vec3 _position;
+  glm::vec3 _front;
+  float     _y_position;
+  bool      _forward  = false;
+  bool      _backward = false;
+  bool      _left     = false;
+  bool      _right    = false;
+  bool      _up       = false;
+  bool      _down     = false;
 };

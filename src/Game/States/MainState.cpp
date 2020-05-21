@@ -5,7 +5,7 @@
 game::states::MainState::MainState(inputs::InputManager &input_manager, Window &window)
   : game::states::State(input_manager, window),
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
-    _camera(_input_manager, { 5, 10, 5 }),
+    _camera({ 5, 10, 5 }),
     _world({}),
     _shader(shaders::DefaultShader::create())
 {

@@ -1,4 +1,7 @@
 #include "Camera.h"
+#include "Events/Dispatcher.h"
+#include "Events/KeyboardEvent.h"
+#include "Events/MousePositionEvent.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <spdlog/spdlog.h>
@@ -7,13 +10,12 @@
 constexpr auto CAMERA_BASE_SPEED = 10.0f;
 constexpr auto CAMERA_SENSITIVITY{ 0.03f };
 
-Camera::Camera(inputs::InputManager &input_manager, const glm::vec3 &start_position)
-  : _input_manager(input_manager),
-    _position(start_position),
+Camera::Camera(const glm::vec3 &start_position)
+  : _position(start_position),
     _front(camera::CAMERA_FRONT),
     _y_position(_position.y)
 {
-  _input_manager.subscribe_to_mouse_event([&](const glm::vec2 &mouse_position) {
+  events::Dispatcher::get().subscribe<events::MousePositionEvent>([&](const events::MousePositionEvent &mouse_position) {
     static float yaw{ 0 };
     static float pitch{ 0 };
     static auto  last_x_position{ mouse_position.x };
@@ -37,6 +39,42 @@ Camera::Camera(inputs::InputManager &input_manager, const glm::vec3 &start_posit
 
     _front = glm::normalize(direction);// set front
   });
+
+  events::Dispatcher::get().subscribe<events::KeyboardEvent>([&](const events::KeyboardEvent &keyboard_event) {
+    bool movement{ false };
+
+    switch (keyboard_event.action) {
+    case GLFW_PRESS:
+      movement = true;
+      break;
+    case GLFW_RELEASE:
+      movement = false;
+      break;
+    case GLFW_REPEAT:
+      return;
+    }
+
+    switch (keyboard_event.key) {
+    case GLFW_KEY_W:
+      _forward = movement;
+      break;
+    case GLFW_KEY_S:
+      _backward = movement;
+      break;
+    case GLFW_KEY_A:
+      _left = movement;
+      break;
+    case GLFW_KEY_D:
+      _right = movement;
+      break;
+    case GLFW_KEY_SPACE:
+      _up = movement;
+      break;
+    case GLFW_KEY_LEFT_SHIFT:
+      _down = movement;
+      break;
+    }
+  });
 }
 
 glm::vec3 Camera::get_position() const noexcept
@@ -53,27 +91,27 @@ void Camera::update(float time_elapsed) noexcept
 {
   const auto speed = CAMERA_BASE_SPEED * static_cast<float>(time_elapsed);
 
-  if (_input_manager.is_pressed(GLFW_KEY_W)) {
+  if (_forward) {
     _position += speed * _front;
   }
 
-  if (_input_manager.is_pressed(GLFW_KEY_S)) {
+  if (_backward) {
     _position -= speed * _front;
   }
 
-  if (_input_manager.is_pressed(GLFW_KEY_A)) {
+  if (_left) {
     _position -= speed * glm::normalize(glm::cross(_front, camera::CAMERA_UP));
   }
 
-  if (_input_manager.is_pressed(GLFW_KEY_D)) {
+  if (_right) {
     _position += speed * glm::normalize(glm::cross(_front, camera::CAMERA_UP));
   }
 
-  if (_input_manager.is_pressed(GLFW_KEY_SPACE)) {
+  if (_up) {
     _y_position += 1.0f * speed;
   }
 
-  if (_input_manager.is_pressed(GLFW_KEY_LEFT_SHIFT)) {
+  if (_down) {
     _y_position -= 1.0f * speed;
   }
 
