@@ -20,7 +20,7 @@ add_executable(game
         Shaders/ShaderBuilder.cpp
         Shaders/DefaultShader.cpp
         Events/KeyboardEvent.cpp
-        Events/MousePositionEvent.cpp)
+        Events/MousePositionEvent.cpp Utils/Profiler.cpp Texture/Atlas.cpp Texture/Atlas.h Texture/Texture.cpp Texture/Texture.h)
 
 target_include_directories(game PRIVATE .)
 

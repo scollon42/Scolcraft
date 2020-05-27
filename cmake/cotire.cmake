@@ -1518,7 +1518,7 @@ function (cotire_add_makedep_flags _language _compilerID _compilerVersion _flags
     set (_flags ${${_flagsVar}})
     if (_compilerID MATCHES "MSVC")
         # cl.exe options used
-        # /nologo suppresses display of sign-on banner
+        # /nologo suppresses dump of sign-on banner
         # /TC treat all files named on the command line as C source files
         # /TP treat all files named on the command line as C++ source files
         # /EP preprocess to stdout without #line directives
@@ -1585,8 +1585,8 @@ function (cotire_add_makedep_flags _language _compilerID _compilerVersion _flags
     elseif (_compilerID MATCHES "Intel")
         if (WIN32)
             # Windows Intel options used
-            # /nologo do not display compiler version information
-            # /QH display the include file order
+            # /nologo do not dump compiler version information
+            # /QH dump the include file order
             # /EP preprocess to stdout, omitting #line directives
             # /TC process all source or unrecognized file types as C source files
             # /TP process all source or unrecognized file types as C++ source files
@@ -1720,7 +1720,7 @@ function (cotire_add_pch_compilation_flags _language _compilerID _compilerVersio
             file (TO_NATIVE_PATH "${_pchFile}" _pchFileNative)
             file (TO_NATIVE_PATH "${_hostFile}" _hostFileNative)
             # Windows Intel options used
-            # /nologo do not display compiler version information
+            # /nologo do not dump compiler version information
             # /Yc create a precompiled header (PCH) file
             # /Fp specify a path or file name for precompiled header files
             # /FI tells the preprocessor to include a specified file name as the header file

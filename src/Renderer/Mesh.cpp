@@ -10,12 +10,12 @@ int renderer::Mesh::get_vertex_data_size() const noexcept
   return static_cast<int>(_vertex_data.size());
 }
 
-void renderer::Mesh::add_vertex(const renderer::Vertex &vertex) noexcept
+[[maybe_unused]] void renderer::Mesh::add_vertex(const renderer::Vertex &vertex) noexcept
 {
   _vertex_data.push_back(vertex);
 }
 
-void renderer::Mesh::update_vertex_data(std::vector<Vertex> vertex_data) noexcept
+[[maybe_unused]] void renderer::Mesh::update_vertex_data(std::vector<Vertex> vertex_data) noexcept
 {
   _vertex_data.clear();
   _vertex_data = std::move(vertex_data);

@@ -5,6 +5,7 @@
 #include <Shaders/DefaultShader.h>
 #include <Renderer/ChunkRenderer.h>
 #include <Camera.h>
+#include <Texture/Atlas.h>
 
 namespace game::states {
 class MainState final : public State
@@ -20,7 +21,8 @@ public:
 private:
   std::unique_ptr<renderer::ChunkRenderer> _chunk_renderer;
   Camera                                   _camera;
-  world::World                             _world;
   std::unique_ptr<shaders::DefaultShader>  _shader;
+  std::unique_ptr<textures::Atlas>         _atlas_texture;
+  world::World                             _world;
 };
 }// namespace game::states

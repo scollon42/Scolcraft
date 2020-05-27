@@ -12,9 +12,9 @@ public:
   [[nodiscard]] int                        get_vertex_data_size() const noexcept;
 
 
-  void add_vertex(const Vertex &vertex) noexcept;
-  void update_vertex_data(std::vector<Vertex> vertex_data) noexcept;
-  void insert_vertex_data(const std::vector<Vertex> &vertex_data) noexcept;
+  [[maybe_unused]] void add_vertex(const Vertex &vertex) noexcept;
+  [[maybe_unused]] void update_vertex_data(std::vector<Vertex> vertex_data) noexcept;
+  void                  insert_vertex_data(const std::vector<Vertex> &vertex_data) noexcept;
 
 private:
   std::vector<Vertex> _vertex_data;
