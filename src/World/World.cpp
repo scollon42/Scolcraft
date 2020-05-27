@@ -1,24 +1,36 @@
 #include "World.h"
 
 #include <spdlog/spdlog.h>
+#include <future>
+
+std::mutex g_Mutex{};
+
+static void gen_and_emplace_chunk(std::unordered_map<int, world::Chunk> *chunks, int x, int y) noexcept
+{
+  const auto index = world::get_index_at(glm::vec2{ x, y });
+
+  world::Chunk chunk{ world::generate_chunk(index, glm::vec2{ x, y }) };
+
+  {
+    std::lock_guard<std::mutex> lock{ g_Mutex };
+    chunks->emplace(std::make_pair(chunk.id, chunk));
+  }
+}
 
 void world::World::build() noexcept
 {
-  constexpr int half_world = world::WORLD_SIZE / 2;
+  constexpr int                  half_world = world::WORLD_SIZE / 2;
+  std::vector<std::future<void>> futures{};
 
   for (int x = -half_world; x < half_world; x++) {
     for (int y = -half_world; y < half_world; y++) {
-      const auto index = get_index_at(glm::vec2{ x, y });
-      //      spdlog::info("index {}", index);
-      world::Chunk chunk{ world::generate_chunk(index, glm::vec2{ x, y }) };
-      //      spdlog::info("Chunk [{}] has position [{}, {}, {}].", chunk.id, chunk.position.x, chunk.position.y, chunk.position.z);
-
-      _chunks.emplace(index, chunk);
+      futures.push_back(std::async(std::launch::async, gen_and_emplace_chunk, &_chunks, x, y));
     }
   }
 
   spdlog::info("World has {} chunks.", _chunks.size());
 }
+
 
 const world::Chunk &world::World::get_chunk_at_player(const glm::vec3 &position) const noexcept
 {

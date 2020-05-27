@@ -7,7 +7,7 @@
 
 namespace world {
 
-constexpr int WORLD_SIZE = 20;
+constexpr int WORLD_SIZE = 10;
 
 class World final
 {

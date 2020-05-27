@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GL/glew.h>
+#include "glew_includes.h"
 #include <map>
 
 #include "Mesh.h"
@@ -11,9 +11,9 @@ class ChunkRenderer final
 public:
   ChunkRenderer();
   ~ChunkRenderer();
-  void update_mesh(int chunk_id, const Mesh &mesh) noexcept;
-  void delete_mesh(int chunk_id) noexcept;
-  void clear_mesh() noexcept;
+  void                  update_mesh(int chunk_id, const Mesh &mesh) noexcept;
+  [[maybe_unused]] void delete_mesh(int chunk_id) noexcept;
+  [[maybe_unused]] void clear_mesh() noexcept;
 
 
   void render() const noexcept;
