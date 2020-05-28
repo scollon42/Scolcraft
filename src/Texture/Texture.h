@@ -18,7 +18,6 @@ public:
 protected:
   int _width{};
   int _height{};
-  int _channels_number{};
 
 private:
   GLuint _id{};

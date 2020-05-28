@@ -14,76 +14,82 @@ enum class FaceDirection {
   BACK
 };
 
+struct BlockData
+{
+  glm::vec3 vertex;
+  glm::vec2 texture;
+};
+
 struct BlockFace
 {
   FaceDirection            direction;
-  std::array<glm::vec3, 6> vertices;
+  std::array<BlockData, 6> face_data;
   glm::vec3                normal;
 };
 
 constexpr BlockFace LEFT{
   FaceDirection::LEFT,
-  { glm::vec3{ 0.0f, 0.0f, 0.0f },
-    glm::vec3{ 0.0f, 0.0f, 1.0f },
-    glm::vec3{ 0.0f, 1.0f, 0.0f },
-    glm::vec3{ 0.0f, 1.0f, 0.0f },
-    glm::vec3{ 0.0f, 1.0f, 1.0f },
-    glm::vec3{ 0.0f, 0.0f, 1.0f } },
+  { BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ -1.0f, 0.0f, 0.0f }
-};
+};// namespace renderer
 
 constexpr BlockFace RIGHT{
   FaceDirection::RIGHT,
-  { glm::vec3{ 1.0f, 0.0f, 0.0f },
-    glm::vec3{ 1.0f, 0.0f, 1.0f },
-    glm::vec3{ 1.0f, 1.0f, 0.0f },
-    glm::vec3{ 1.0f, 1.0f, 0.0f },
-    glm::vec3{ 1.0f, 1.0f, 1.0f },
-    glm::vec3{ 1.0f, 0.0f, 1.0f } },
+  { BlockData{ glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 1.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ 1.0f, 0.0f, 0.0f }
 };
 
 constexpr BlockFace BOTTOM{
   FaceDirection::BOTTOM,
-  { glm::vec3{ 0.0f, 0.0f, 0.0f },
-    glm::vec3{ 0.0f, 0.0f, 1.0f },
-    glm::vec3{ 1.0f, 0.0f, 0.0f },
-    glm::vec3{ 1.0f, 0.0f, 0.0f },
-    glm::vec3{ 1.0f, 0.0f, 1.0f },
-    glm::vec3{ 0.0f, 0.0f, 1.0f } },
+  { BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ 0.0f, -1.0f, 0.0f }
 };
 
 constexpr BlockFace TOP{
   FaceDirection::TOP,
-  { glm::vec3{ 0.0f, 1.0f, 0.0f },
-    glm::vec3{ 0.0f, 1.0f, 1.0f },
-    glm::vec3{ 1.0f, 1.0f, 0.0f },
-    glm::vec3{ 1.0f, 1.0f, 0.0f },
-    glm::vec3{ 1.0f, 1.0f, 1.0f },
-    glm::vec3{ 0.0f, 1.0f, 1.0f } },
+  { BlockData{ glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 1.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ 0.0f, 1.0f, 0.0f }
 };
 
 constexpr BlockFace FRONT{
   FaceDirection::FRONT,
-  { glm::vec3{ 0.0f, 0.0f, 0.0f },
-    glm::vec3{ 0.0f, 1.0f, 0.0f },
-    glm::vec3{ 1.0f, 0.0f, 0.0f },
-    glm::vec3{ 1.0f, 0.0f, 0.0f },
-    glm::vec3{ 1.0f, 1.0f, 0.0f },
-    glm::vec3{ 0.0f, 1.0f, 0.0f } },
+  { BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 0.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 0.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 0.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 0.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ 0.0f, 0.0f, -1.0f }
 };
 
 constexpr BlockFace BACK{
   FaceDirection::BACK,
-  { glm::vec3{ 0.0f, 0.0f, 1.0f },
-    glm::vec3{ 1.0f, 0.0f, 1.0f },
-    glm::vec3{ 0.0f, 1.0f, 1.0f },
-    glm::vec3{ 0.0f, 1.0f, 1.0f },
-    glm::vec3{ 1.0f, 1.0f, 1.0f },
-    glm::vec3{ 1.0f, 0.0f, 1.0f } },
+  { BlockData{ glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 0.0f, 1.0f }, glm::vec2{ 0, 1 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 1.0f, 1.0f, 1.0f }, glm::vec2{ 0, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 1.0f, 1.0f }, glm::vec2{ 1, 0 } },
+    BlockData{ glm::vec3{ 0.0f, 0.0f, 1.0f }, glm::vec2{ 1, 1 } } },
   glm::vec3{ 0.0f, 0.0f, 1.0f }
 };
 

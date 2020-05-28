@@ -8,7 +8,7 @@ game::states::MainState::MainState(inputs::InputManager &input_manager, Window &
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera({ 5, 10, 5 }),
     _shader(shaders::DefaultShader::create()),
-    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain.png", 256, 16)),// FIXME
+    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain3.jpg", 1024, 64)),// FIXME
     _world({})
 {
 }
@@ -58,7 +58,7 @@ void game::states::MainState::render()
   _shader->bind();
   _atlas_texture->bind();
   _shader->set_light_color(glm::vec3(1.0f, 1.0f, 1.0f));
-  _shader->set_light_position(glm::vec3(0.0f, 256.0f, 0.0f));
+  _shader->set_light_position(glm::vec3(0.0f, 128.0f, 0.0f));
   _shader->set_view_position(_camera.get_position());
   _shader->set_view(_camera.get_view_matrix());
   _shader->set_projection(_window.get_screen_projection());
