@@ -7,7 +7,9 @@ textures::Texture::Texture(const std::string &filename)
 {
   spdlog::info("Creating Texture Object.");
 
-  const auto data = stbi_load(filename.c_str(), &_width, &_height, &_channels_number, 0);
+  int channels_number{ 0 };
+
+  const auto data = stbi_load(filename.c_str(), &_width, &_height, &channels_number, 0);
 
   if (data == nullptr) {
     throw std::runtime_error(fmt::format("Failed to load texture [{}]", filename));
@@ -16,14 +18,16 @@ textures::Texture::Texture(const std::string &filename)
   glGenTextures(1, &_id);
   bind();
 
+  const GLenum channel_mod = channels_number == 4 ? GL_RGBA : GL_RGB;
+
   glTexImage2D(
     GL_TEXTURE_2D,
     0,
-    GL_RGBA,
+    static_cast<int>(channel_mod),
     _width,
     _height,
     0,
-    GL_RGBA,
+    channel_mod,
     GL_UNSIGNED_BYTE,
     data);
 

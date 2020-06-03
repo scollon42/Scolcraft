@@ -1,28 +1,17 @@
 #include "Atlas.h"
 
 textures::Atlas::Atlas(const std::string &texture_filename, std::size_t size, std::size_t texture_size)
-  : Texture(texture_filename), _size(size), _texture_size(texture_size)
+  : Texture(texture_filename), _unit_size(1.0f / static_cast<float>(size / texture_size))
 {
 }
 
-std::array<glm::vec2, 6> textures::Atlas::get_texture_coordinates(const glm::vec2 &coordinate) const noexcept
+textures::TextureBoundaries textures::Atlas::get_texture_boundaries(const glm::vec2 &atlas_coordinate) const noexcept
 {
-  const static auto textures_per_row = _size / _texture_size;
-  const static auto unit_size        = 1.0f / static_cast<float>(textures_per_row);
-
-  auto x_min = coordinate.x * unit_size;
-  auto y_min = coordinate.y * unit_size;
-
-  auto x_max = x_min + unit_size;
-  auto y_max = y_min + unit_size;
+  const glm::vec2 min{ atlas_coordinate.x * _unit_size, atlas_coordinate.y * _unit_size };
+  const glm::vec2 max{ min.x + _unit_size, min.y + _unit_size };
 
   return {
-    glm::vec2{ x_min, y_min },
-    glm::vec2{ x_min, y_max },
-    glm::vec2{ x_max, y_min },
-
-    glm::vec2{ x_max, y_min },
-    glm::vec2{ x_max, y_max },
-    glm::vec2{ x_min, y_max },
+    min,
+    max
   };
 }

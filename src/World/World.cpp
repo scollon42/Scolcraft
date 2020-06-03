@@ -1,15 +1,14 @@
 #include "World.h"
-
 #include <spdlog/spdlog.h>
 #include <future>
 
 std::mutex g_Mutex{};
 
-static void gen_and_emplace_chunk(std::unordered_map<int, world::Chunk> *chunks, int x, int y) noexcept
+static void gen_and_emplace_chunk(std::unordered_map<int, world::chunks::Chunk> *chunks, int x, int y) noexcept
 {
   const auto index = world::get_index_at(glm::vec2{ x, y });
 
-  world::Chunk chunk{ world::generate_chunk(index, glm::vec2{ x, y }) };
+  world::chunks::Chunk chunk{ world::chunks::generate_chunk(index, glm::vec2{ x, y }) };
 
   {
     std::lock_guard<std::mutex> lock{ g_Mutex };
@@ -19,6 +18,30 @@ static void gen_and_emplace_chunk(std::unordered_map<int, world::Chunk> *chunks,
 
 void world::World::build() noexcept
 {
+
+  //FIXME : use json to define world blocks type etc...
+  _block_data.emplace(
+    std::make_pair(
+      world::blocks::BlockType::AIR,
+      world::blocks::Block{}));
+
+  _block_data.emplace(
+    std::make_pair(
+      world::blocks::BlockType::DIRT,
+      world::blocks::Block{
+        world::blocks::BlockTextureCoordinates{ { 2, 0 } },
+        world::blocks::VISIBLE }));
+
+  _block_data.emplace(
+    std::make_pair(
+      world::blocks::BlockType::GRASS,
+      world::blocks::Block{
+        world::blocks::BlockTextureCoordinates{
+          { 3, 0 },
+          { 0, 0 },
+          { 2, 0 } },
+        world::blocks::VISIBLE }));
+
   constexpr int                  half_world = world::WORLD_SIZE / 2;
   std::vector<std::future<void>> futures{};
 
@@ -31,15 +54,20 @@ void world::World::build() noexcept
   spdlog::info("World has {} chunks.", _chunks.size());
 }
 
+const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &world::World::get_block_data() const noexcept
+{
+  return _block_data;
+}
 
-const world::Chunk &world::World::get_chunk_at_player(const glm::vec3 &position) const noexcept
+
+const world::chunks::Chunk &world::World::get_chunk_at_player(const glm::vec3 &position) const noexcept
 {
   return _chunks.at(world::get_index_at_player(position));
 }
 
-std::vector<world::Chunk> world::World::get_chunks_around(const glm::vec3 &position, [[maybe_unused]] unsigned int radius = 1) const noexcept
+std::vector<world::chunks::Chunk> world::World::get_chunks_around(const glm::vec3 &position, [[maybe_unused]] unsigned int radius = 1) const noexcept
 {
-  std::vector<world::Chunk> chunks{};
+  std::vector<world::chunks::Chunk> chunks{};
 
   const auto current_chunk{ get_chunk_at_player(position) };
   chunks.push_back(current_chunk);

@@ -6,15 +6,21 @@
 #include <glm/vec2.hpp>
 
 namespace textures {
+
+struct TextureBoundaries
+{
+  glm::vec2 min;
+  glm::vec2 max;
+};
+
 class Atlas final : public Texture
 {
 public:
   Atlas(const std::string &texture_filename, std::size_t size, std::size_t texture_size);
 
-  [[nodiscard]] std::array<glm::vec2, 6> get_texture_coordinates(const glm::vec2 &coordinate) const noexcept;
+  [[nodiscard]] TextureBoundaries get_texture_boundaries(const glm::vec2 &atlas_coordinate) const noexcept;
 
 private:
-  std::size_t _size;
-  std::size_t _texture_size;
+  const float _unit_size;
 };
 }// namespace textures
