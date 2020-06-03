@@ -5,9 +5,12 @@ add_executable(game
         Game/Game.cpp
         Game/States/MainState.cpp
         Utils/PerlinNoise.cpp
+        World/Chunks/Chunk.cpp
+        World/Chunks/ChunkBlock.cpp
+        World/Blocks/BlockType.cpp
+        World/Blocks/Block.cpp
+        World/Blocks/BlockTextureCoordinates.cpp
         World/World.cpp
-        World/Block.cpp
-        World/Chunk.cpp
         Renderer/Mesh.cpp
         Renderer/Vertex.cpp
         Renderer/ChunkRenderer.cpp
@@ -20,7 +23,10 @@ add_executable(game
         Shaders/ShaderBuilder.cpp
         Shaders/DefaultShader.cpp
         Events/KeyboardEvent.cpp
-        Events/MousePositionEvent.cpp Utils/Profiler.cpp Texture/Atlas.cpp Texture/Atlas.h Texture/Texture.cpp Texture/Texture.h)
+        Events/MousePositionEvent.cpp
+        Utils/Profiler.cpp
+        Texture/Atlas.cpp
+        Texture/Texture.cpp)
 
 target_include_directories(game PRIVATE .)
 

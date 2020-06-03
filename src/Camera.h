@@ -12,7 +12,7 @@ constexpr glm::vec3 CAMERA_FRONT{ glm::vec3(0.0f, 0.0f, -1.0f) };
 class Camera final
 {
 public:
-  Camera(const glm::vec3 &start_position);
+  explicit Camera(const glm::vec3 &start_position);
   [[nodiscard]] glm::vec3 get_position() const noexcept;
   [[nodiscard]] glm::mat4 get_view_matrix() const noexcept;
 

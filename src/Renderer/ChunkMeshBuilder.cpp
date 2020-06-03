@@ -2,6 +2,8 @@
 #include <Renderer/BlockFace.h>
 #include <spdlog/spdlog.h>
 
+using namespace world;
+
 struct BlockTextureFaces
 {
   textures::TextureBoundaries sides;
@@ -10,42 +12,66 @@ struct BlockTextureFaces
 };
 
 [[nodiscard]] std::vector<renderer::Vertex>
-  build_block_mesh_data(const world::Chunk &chunk, const world::Block &block, const BlockTextureFaces &block_texture_faces);
+  build_block_mesh_data(const chunks::Chunk &chunk, const chunks::ChunkBlock &block, const BlockTextureFaces &block_texture_faces);
 
 renderer::ChunkMeshBuilder::ChunkMeshBuilder(const textures::Atlas &atlas)
   : _atlas_texture(atlas)
 {
 }
 
-renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const world::Chunk &chunk) const noexcept
+inline bool should_be_drawn(const std::unordered_map<blocks::BlockType, blocks::Block> &block_data, const std::vector<chunks::ChunkBlock> &neighbours) noexcept
 {
-  renderer::Mesh mesh{};
+  bool should_be_drawn = false;
 
-  for (const auto &block : chunk.blocks) {
-    if (!world::is_visible_block_type(block.type)) {
-      continue;
+  for (const auto &neighbour : neighbours) {
+    if (neighbour.type == blocks::BlockType::NONE) {
+      should_be_drawn = true;
+      break;
     }
 
-    const auto &neighbours = world::get_neighbours_blocks(chunk, block.position);
+    const auto &neighbour_data = block_data.find(neighbour.type);
+    if (neighbour_data == block_data.end()) {
+      should_be_drawn = true;
+      break;
 
-    bool should_be_drawn = false;
-
-    for (const auto &neighbour : neighbours) {
-      if (!world::is_visible_block_type(neighbour.type)) {
+    } else {
+      if (!neighbour_data->second.visible) {
         should_be_drawn = true;
         break;
       }
     }
+  }
+  return should_be_drawn;
+}
 
-    if (should_be_drawn) {
+renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const std::unordered_map<blocks::BlockType, blocks::Block> &block_data, const chunks::Chunk &chunk) const noexcept
+{
+  renderer::Mesh mesh{};
+
+  for (const auto block : chunk.blocks) {
+    const auto &data = block_data.find(block.type);
+
+    if (data == block_data.end()) {
+      spdlog::error("{} is not a valid block type", block.type);
+      continue;
+    }
+
+    if (!data->second.visible) {
+      continue;
+    }
+
+    const auto &neighbours = chunks::get_neighbours_blocks(chunk, block.position);
+
+
+    if (should_be_drawn(block_data, neighbours)) {
+
       const BlockTextureFaces block_texture_faces{
-        _atlas_texture.get_texture_boundaries({ 3, 0 }),
-        _atlas_texture.get_texture_boundaries({ 0, 0 }),
-        _atlas_texture.get_texture_boundaries({ 2, 0 })
+        _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.sides),
+        _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.top),
+        _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.bottom)
       };
 
-      const auto data = build_block_mesh_data(chunk, block, block_texture_faces);
-      mesh.insert_vertex_data(data);
+      mesh.insert_vertex_data(build_block_mesh_data(chunk, block, block_texture_faces));
     }
   }
 
@@ -60,13 +86,13 @@ inline glm::vec2 build_texture_coordinates(const textures::TextureBoundaries &bo
   };
 }
 
-std::vector<renderer::Vertex> build_block_mesh_data(const world::Chunk &chunk, const world::Block &block, const BlockTextureFaces &block_texture_faces)
+std::vector<renderer::Vertex> build_block_mesh_data(const chunks::Chunk &chunk, const chunks::ChunkBlock &block, const BlockTextureFaces &block_texture_faces)
 {
   std::vector<renderer::Vertex> block_vertex_data{};
 
   block_vertex_data.reserve(36);
 
-  const glm::vec3 block_position{ world::to_absolute_position(chunk, block.position) };
+  const glm::vec3 block_position{ chunks::to_absolute_position(chunk, block.position) };
 
   for (const auto &face : renderer::BLOCK_MESH_FACES) {
     auto texture_coordinates = block_texture_faces.sides;

@@ -8,7 +8,7 @@ game::states::MainState::MainState(inputs::InputManager &input_manager, Window &
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera({ 5, 10, 5 }),
     _shader(shaders::DefaultShader::create()),
-    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain3.jpg", 1024, 64)),// FIXME
+    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain.png", 768, 48)),// FIXME
     _world({})
 {
 }
@@ -20,7 +20,7 @@ void game::states::MainState::init()
   const auto chunk_mesh_builder = std::make_unique<renderer::ChunkMeshBuilder>(*_atlas_texture);
 
   for (const auto &chunk : _world.get_chunks_around(_camera.get_position(), 5)) {
-    const auto &mesh = chunk_mesh_builder->get_mesh(chunk);
+    const auto &mesh = chunk_mesh_builder->get_mesh(_world.get_block_data(), chunk);
     _chunk_renderer->update_mesh(chunk.id, mesh);
   }
 }
