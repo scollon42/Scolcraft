@@ -14,8 +14,11 @@ struct BlockTextureFaces
 [[nodiscard]] std::vector<renderer::Vertex>
   build_block_mesh_data(const chunks::Chunk &chunk, const chunks::ChunkBlock &block, const BlockTextureFaces &block_texture_faces);
 
-renderer::ChunkMeshBuilder::ChunkMeshBuilder(const textures::Atlas &atlas)
-  : _atlas_texture(atlas)
+renderer::ChunkMeshBuilder::ChunkMeshBuilder(
+  const textures::Atlas &                                                   atlas,
+  const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &block_data)
+  : _atlas_texture(atlas),
+    _block_data(block_data)
 {
 }
 
@@ -44,14 +47,14 @@ inline bool should_be_drawn(const std::unordered_map<blocks::BlockType, blocks::
   return should_be_drawn;
 }
 
-renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const std::unordered_map<blocks::BlockType, blocks::Block> &block_data, const chunks::Chunk &chunk) const noexcept
+renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const chunks::Chunk &chunk) const noexcept
 {
   renderer::Mesh mesh{};
 
   for (const auto block : chunk.blocks) {
-    const auto &data = block_data.find(block.type);
+    const auto &data = _block_data.find(block.type);
 
-    if (data == block_data.end()) {
+    if (data == _block_data.end()) {
       spdlog::error("{} is not a valid block type", block.type);
       continue;
     }
@@ -63,7 +66,7 @@ renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const std::unordered_map<blo
     const auto &neighbours = chunks::get_neighbours_blocks(chunk, block.position);
 
 
-    if (should_be_drawn(block_data, neighbours)) {
+    if (should_be_drawn(_block_data, neighbours)) {
 
       const BlockTextureFaces block_texture_faces{
         _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.sides),

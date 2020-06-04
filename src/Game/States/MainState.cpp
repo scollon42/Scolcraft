@@ -17,10 +17,10 @@ void game::states::MainState::init()
 {
   _world.build();
 
-  const auto chunk_mesh_builder = std::make_unique<renderer::ChunkMeshBuilder>(*_atlas_texture);
+  const auto chunk_mesh_builder = std::make_unique<renderer::ChunkMeshBuilder>(*_atlas_texture, _world.get_block_data());
 
   for (const auto &chunk : _world.get_chunks_around(_camera.get_position(), 5)) {
-    const auto &mesh = chunk_mesh_builder->get_mesh(_world.get_block_data(), chunk);
+    const auto &mesh = chunk_mesh_builder->get_mesh(chunk);
     _chunk_renderer->update_mesh(chunk.id, mesh);
   }
 }
