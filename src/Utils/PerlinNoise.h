@@ -1,3 +1,6 @@
+// file deepcode ignore DivisionByZero: will be deleted later
+
+
 //----------------------------------------------------------------------------------------
 //
 //	siv::PerlinNoise

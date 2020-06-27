@@ -2,6 +2,8 @@
 #include <spdlog/spdlog.h>
 #include <future>
 
+#include <Texture/AtlasTextureParser.h>
+
 std::mutex g_Mutex{};
 
 static void gen_and_emplace_chunk(std::unordered_map<int, world::chunks::Chunk> *chunks, int x, int y) noexcept
@@ -18,6 +20,8 @@ static void gen_and_emplace_chunk(std::unordered_map<int, world::chunks::Chunk> 
 
 void world::World::build() noexcept
 {
+
+  [[maybe_unused]] const auto _data = textures::AtlasTextureParser::parse("../../resources");
 
   //FIXME : use json to define world blocks type etc...
   _block_data.emplace(

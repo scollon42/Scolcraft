@@ -52,6 +52,7 @@ set(CONAN_EXTRA_REQUIRES ${CONAN_EXTRA_REQUIRES}
         glfw/3.3.2@bincrafters/stable
         glm/0.9.9.8
         stb/20190512@conan/stable
+        nlohmann_json/3.8.0
         )
 
 set(CONAN_EXTRA_OPTIONS ${CONAN_EXTRA_OPTIONS}

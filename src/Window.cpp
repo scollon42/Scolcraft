@@ -18,10 +18,16 @@ Window::Window(int width, int height, const std::string &title)
     spdlog::error("Failed to initialize GLFW");
     std::abort();
   }
+  glfwSetErrorCallback([](int error_code, const char * error_message) {
+    spdlog::error("GLFW [{}] - {}", error_code, error_message);
+  });
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
   _window_ptr.reset(glfwCreateWindow(_width, _height, title.data(), nullptr, nullptr));
 
   if (_window_ptr == nullptr) {

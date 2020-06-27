@@ -1,0 +1,21 @@
+{
+  "filename": "terrain.png",
+  "row_size": 768,
+  "block_size": 48,
+  "blocks": [
+    {
+      "type": "dirt",
+      "textures": {
+        "all": [2,0]
+      }
+    },
+    {
+      "type": "grass",
+      "textures": {
+        "sides": [3,0],
+        "top": [0,0],
+        "bottom": [2,0]
+      }
+    }
+  ]
+}

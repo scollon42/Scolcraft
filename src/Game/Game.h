@@ -4,6 +4,7 @@
 #include <Window.h>
 #include <Inputs/InputManager.h>
 #include <Game/States/State.h>
+#include <vector>
 
 namespace game {
 class Game

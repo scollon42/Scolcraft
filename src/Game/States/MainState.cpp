@@ -8,7 +8,7 @@ game::states::MainState::MainState(inputs::InputManager &input_manager, Window &
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera({ 5, 10, 5 }),
     _shader(shaders::DefaultShader::create()),
-    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain.png", 768, 48)),// FIXME
+    _atlas_texture(std::make_unique<textures::Atlas>("../../resources/terrain.png", 768, 48)),// FIXME
     _world({})
 {
 }

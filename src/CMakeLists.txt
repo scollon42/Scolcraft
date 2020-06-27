@@ -26,7 +26,9 @@ add_executable(game
         Events/MousePositionEvent.cpp
         Utils/Profiler.cpp
         Texture/Atlas.cpp
-        Texture/Texture.cpp)
+        Texture/Texture.cpp
+        Texture/AtlasTextureParser.cpp
+        )
 
 target_include_directories(game PRIVATE .)
 
@@ -42,6 +44,7 @@ target_link_libraries(
         CONAN_PKG::glew
         CONAN_PKG::glfw
         CONAN_PKG::glm
+        CONAN_PKG::nlohmann_json
 )
 
 
