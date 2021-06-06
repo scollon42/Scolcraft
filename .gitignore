@@ -2,3 +2,5 @@
 build/**/*
 .clangd
 .vscode
+
+cmake-build*/**/*

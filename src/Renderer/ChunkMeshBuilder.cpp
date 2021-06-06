@@ -67,7 +67,6 @@ renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const chunks::Chunk &chunk) 
 
 
     if (should_be_drawn(_block_data, neighbours)) {
-
       const BlockTextureFaces block_texture_faces{
         _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.sides),
         _atlas_texture.get_texture_boundaries(data->second.texture_coordinates.top),

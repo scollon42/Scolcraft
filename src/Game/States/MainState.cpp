@@ -2,19 +2,21 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <Renderer/ChunkMeshBuilder.h>
 #include <Utils/Profiler.h>
+#include "Texture/loader.h"
 
 game::states::MainState::MainState(inputs::InputManager &input_manager, Window &window)
   : game::states::State(input_manager, window),
     _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera({ 5, 10, 5 }),
     _shader(shaders::DefaultShader::create()),
-    _atlas_texture(std::make_unique<textures::Atlas>("/home/scollon/Programming/best_cpp_project/terrain.png", 768, 48)),// FIXME
     _world({})
 {
+  _atlas_texture = textures::loader::load_atlas("/Users/scollon/Projects/Scolcraft/texture.json");
 }
 
 void game::states::MainState::init()
 {
+  spdlog::info("MainState : [INIT].");
   _world.build();
 
   const auto chunk_mesh_builder = std::make_unique<renderer::ChunkMeshBuilder>(*_atlas_texture, _world.get_block_data());
@@ -51,6 +53,7 @@ void game::states::MainState::inputs()
 void game::states::MainState::update(float elapsed_time)
 {
   _camera.update(elapsed_time);
+//  _world.update(elapsed_time);
 }
 
 void game::states::MainState::render()
