@@ -40,7 +40,7 @@ catch_discover_tests(
   --reporter=xml
   --out=constexpr.xml)
 
-# Disable the constexpr portion of the test, and build again this allows us to
+# Disable the constexpr portion of the test, and init again this allows us to
 # have an executable that we can debug when things go wrong with the constexpr
 # testing
 add_executable(relaxed_constexpr_tests constexpr_tests.cpp)

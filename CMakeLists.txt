@@ -31,7 +31,7 @@ option(ENABLE_TESTING "Enable Test Builds" ON)
 # Very basic PCH example
 option(ENABLE_PCH "Enable Precompiled Headers" OFF)
 if (ENABLE_PCH)
-    # This sets a global PCH parameter, each project will build its own PCH, which
+    # This sets a global PCH parameter, each project will init its own PCH, which
     # is a good idea if any #define's change
     target_precompile_headers(project_options INTERFACE <vector> <string> <map> <utility>)
 endif ()

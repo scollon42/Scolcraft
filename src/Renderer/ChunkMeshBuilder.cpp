@@ -14,11 +14,8 @@ struct BlockTextureFaces
 [[nodiscard]] std::vector<renderer::Vertex>
   build_block_mesh_data(const chunks::Chunk &chunk, const chunks::ChunkBlock &block, const BlockTextureFaces &block_texture_faces);
 
-renderer::ChunkMeshBuilder::ChunkMeshBuilder(
-  const textures::Atlas &                                                   atlas,
-  const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &block_data)
-  : _atlas_texture(atlas),
-    _block_data(block_data)
+renderer::ChunkMeshBuilder::ChunkMeshBuilder(const textures::Atlas &atlas, const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &block_data) : _atlas_texture(atlas),
+                                                                                                                                                                   _block_data(block_data)
 {
 }
 
@@ -33,22 +30,22 @@ inline bool should_be_drawn(const std::unordered_map<blocks::BlockType, blocks::
     }
 
     const auto &neighbour_data = block_data.find(neighbour.type);
-    if (neighbour_data == block_data.end()) {
+    if (neighbour_data == block_data.end() || !neighbour_data->second.visible) {
       should_be_drawn = true;
-      break;
-
-    } else {
-      if (!neighbour_data->second.visible) {
-        should_be_drawn = true;
-        break;
-      }
     }
   }
+
   return should_be_drawn;
 }
 
-renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const chunks::Chunk &chunk) const noexcept
+renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const chunks::Chunk &chunk) noexcept
 {
+  const auto cached_mesh = _mesh_cache.find(chunk.id);
+
+  if (cached_mesh != _mesh_cache.end()) {
+    return cached_mesh->second;
+  }
+
   renderer::Mesh mesh{};
 
   for (const auto block : chunk.blocks) {
@@ -76,6 +73,8 @@ renderer::Mesh renderer::ChunkMeshBuilder::get_mesh(const chunks::Chunk &chunk) 
       mesh.insert_vertex_data(build_block_mesh_data(chunk, block, block_texture_faces));
     }
   }
+
+  _mesh_cache.insert({ chunk.id, mesh });
 
   return mesh;
 }

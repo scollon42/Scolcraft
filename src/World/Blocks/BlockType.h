@@ -5,6 +5,8 @@ enum class BlockType {
   NONE = -1,
   AIR,
   DIRT,
-  GRASS
+  GRASS,
+  WOOD,
+  LEAF
 };
 }// namespace world::blocks

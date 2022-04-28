@@ -1,11 +1,12 @@
 #pragma once
 #include "glew_includes.h"
-#include <Game/States/State.h>
-#include <World/World.h>
-#include <Shaders/DefaultShader.h>
-#include <Renderer/ChunkRenderer.h>
-#include <Camera.h>
-#include <Texture/Atlas.h>
+#include "Game/States/State.h"
+#include "World/World.h"
+#include "Shaders/DefaultShader.h"
+#include "Renderer/ChunkRenderer.h"
+#include "Camera.h"
+#include "Texture/Atlas.h"
+#include "Renderer/WorldRenderer.h"
 
 namespace game::states {
 class MainState final : public State
@@ -19,10 +20,10 @@ public:
   void render() override;
 
 private:
-  std::unique_ptr<renderer::ChunkRenderer> _chunk_renderer;
   Camera                                   _camera;
   std::unique_ptr<shaders::DefaultShader>  _shader;
   std::unique_ptr<textures::Atlas>         _atlas_texture;
   world::World                             _world;
+  std::unique_ptr<renderer::WorldRenderer> _world_renderer;
 };
 }// namespace game::states

@@ -10,15 +10,14 @@ namespace renderer {
 class ChunkMeshBuilder
 {
 public:
-  ChunkMeshBuilder(
-    const textures::Atlas &                                                   atlas,
-    const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &block_data);
+  ChunkMeshBuilder(const textures::Atlas &atlas, const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &block_data);
 
-  [[nodiscard]] Mesh get_mesh(const world::chunks::Chunk &chunk) const noexcept;
+  [[nodiscard]] Mesh get_mesh(const world::chunks::Chunk &chunk) noexcept;
 
 private:
-  const textures::Atlas &                                                   _atlas_texture;
-  const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &_block_data;
+  const textures::Atlas &_atlas_texture;
 
+  const std::unordered_map<world::blocks::BlockType, world::blocks::Block> &_block_data;
+  std::unordered_map<int, renderer::Mesh>                                   _mesh_cache;
 };// namespace ChunkMeshBuilder
 }// namespace renderer

@@ -1,6 +1,7 @@
 #include "World.h"
 #include <spdlog/spdlog.h>
 #include <future>
+#include <World/Chunks/Generator.h>
 
 std::mutex g_Mutex{};
 
@@ -16,9 +17,9 @@ static void gen_and_emplace_chunk(std::unordered_map<int, world::chunks::Chunk> 
   }
 }
 
-void world::World::build() noexcept
+void world::World::init() noexcept
 {
-
+  spdlog::info("Initializing world...");
   //FIXME : use json to define world blocks type etc...
   _block_data.emplace(
     std::make_pair(
@@ -37,9 +38,27 @@ void world::World::build() noexcept
       world::blocks::BlockType::GRASS,
       world::blocks::Block{
         world::blocks::BlockTextureCoordinates{
-          { 3, 0 },
+          { 1, 0 },
           { 0, 0 },
           { 2, 0 } },
+        world::blocks::VISIBLE }));
+
+  _block_data.emplace(
+    std::make_pair(
+      world::blocks::BlockType::WOOD,
+      world::blocks::Block{
+        world::blocks::BlockTextureCoordinates{
+          { 4, 0 },
+          { 5, 0 },
+          { 5, 0 } },
+        world::blocks::VISIBLE }));
+
+  _block_data.emplace(
+    std::make_pair(
+      world::blocks::BlockType::LEAF,
+      world::blocks::Block{
+        world::blocks::BlockTextureCoordinates{
+          { 6, 0 } },
         world::blocks::VISIBLE }));
 
   constexpr int                  half_world = world::WORLD_SIZE / 2;
@@ -78,7 +97,11 @@ std::vector<world::chunks::Chunk> world::World::get_chunks_around(const glm::vec
     for (int y = -rad; y < rad; y++) {
       const auto pos = current_chunk_position + glm::vec2(x, y);
 
-      chunks.push_back(_chunks.at(get_index_at(pos)));
+      const auto chunk = _chunks.find(get_index_at(pos));
+
+      if (chunk != _chunks.end()) {
+        chunks.push_back(chunk->second);
+      }
     }
   }
   return chunks;

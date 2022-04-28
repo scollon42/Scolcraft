@@ -41,15 +41,16 @@ struct Chunk
 }
 [[nodiscard]] inline int get_index_at(const glm::vec3 &position)
 {
-  return static_cast<int>(position.x + CHUNK_SIZE_X * (position.y + CHUNK_SIZE_Y * position.z));
+  const auto index = position.z * CHUNK_SIZE_Y * CHUNK_SIZE_X + position.y * CHUNK_SIZE_X + position.x;
+  return static_cast<int>(index);
 }
-
-[[nodiscard]] Chunk generate_chunk(int id, const glm::vec2 &position);
 
 [[nodiscard]] std::vector<ChunkBlock> get_neighbours_blocks(const Chunk &chunk, const glm::vec3 &position) noexcept;
 
 [[maybe_unused]] [[nodiscard]] const ChunkBlock &get_absolute_block_at(const Chunk &chunk, const glm::vec3 &position);
 
 [[nodiscard]] const ChunkBlock &get_relative_block_at(const Chunk &chunk, const glm::vec3 &position);
+
+[[maybe_unused]] void update_block_type_at(Chunk &chunk, const glm::vec3 &position, blocks::BlockType blockType) noexcept;
 
 }// namespace world::chunks

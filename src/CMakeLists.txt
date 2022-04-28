@@ -7,6 +7,7 @@ add_executable(game
         Utils/PerlinNoise.cpp
         World/Chunks/Chunk.cpp
         World/Chunks/ChunkBlock.cpp
+        World/Chunks/Generator.cpp
         World/Blocks/BlockType.cpp
         World/Blocks/Block.cpp
         World/Blocks/BlockTextureCoordinates.cpp
@@ -26,7 +27,9 @@ add_executable(game
         Events/MousePositionEvent.cpp
         Utils/Profiler.cpp
         Texture/Atlas.cpp
-        Texture/Texture.cpp Texture/loader.cpp Texture/loader.h)
+        Texture/Texture.cpp
+        Texture/loader.cpp
+        Renderer/WorldRenderer.cpp)
 
 target_include_directories(game PRIVATE .)
 

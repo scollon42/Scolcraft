@@ -8,12 +8,12 @@
 #include <World/Blocks/Block.h>
 
 namespace world {
-constexpr int WORLD_SIZE = 10;
+constexpr int WORLD_SIZE = 50;
 
 class World final
 {
 public:
-  void build() noexcept;
+  void init() noexcept;
 
   [[nodiscard]] const chunks::Chunk &                                       get_chunk_at_player(const glm::vec3 &position) const noexcept;
   [[nodiscard]] std::vector<chunks::Chunk>                                  get_chunks_around(const glm::vec3 &position, unsigned int radius) const noexcept;

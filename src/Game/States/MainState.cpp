@@ -6,25 +6,18 @@
 
 game::states::MainState::MainState(inputs::InputManager &input_manager, Window &window)
   : game::states::State(input_manager, window),
-    _chunk_renderer(std::make_unique<renderer::ChunkRenderer>()),
     _camera({ 5, 10, 5 }),
     _shader(shaders::DefaultShader::create()),
     _world({})
 {
+  _world.init();
   _atlas_texture = textures::loader::load_atlas("/Users/scollon/Projects/Scolcraft/texture.json");
+  _world_renderer = std::make_unique<renderer::WorldRenderer>(_world, *_atlas_texture);
 }
 
 void game::states::MainState::init()
 {
   spdlog::info("MainState : [INIT].");
-  _world.build();
-
-  const auto chunk_mesh_builder = std::make_unique<renderer::ChunkMeshBuilder>(*_atlas_texture, _world.get_block_data());
-
-  for (const auto &chunk : _world.get_chunks_around(_camera.get_position(), 5)) {
-    const auto &mesh = chunk_mesh_builder->get_mesh(chunk);
-    _chunk_renderer->update_mesh(chunk.id, mesh);
-  }
 }
 
 void game::states::MainState::inputs()
@@ -53,15 +46,16 @@ void game::states::MainState::inputs()
 void game::states::MainState::update(float elapsed_time)
 {
   _camera.update(elapsed_time);
-//  _world.update(elapsed_time);
+  _world_renderer->update(_world, _camera);
 }
+
 
 void game::states::MainState::render()
 {
   _shader->bind();
   _atlas_texture->bind();
   _shader->set_light_color(glm::vec3(1.0f, 1.0f, 1.0f));
-  _shader->set_light_position(glm::vec3(0.0f, 128.0f, 0.0f));
+  _shader->set_light_position(glm::vec3(2000.0f, 2000.0f, 0.0f));
   _shader->set_view_position(_camera.get_position());
   _shader->set_view(_camera.get_view_matrix());
   _shader->set_projection(_window.get_screen_projection());
@@ -69,7 +63,7 @@ void game::states::MainState::render()
   // FIXME: Use model inside of chunk to translate chunk position
   _shader->set_model(glm::mat4{ 1.0f });
 
-  _chunk_renderer->render();
+  _world_renderer->render();
 
   _atlas_texture->unbind();
   _shader->unbind();

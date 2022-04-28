@@ -8,6 +8,7 @@ struct ChunkBlock
 {
   blocks::BlockType type;
   glm::vec3         position;
+  bool              hasThree = false;
 };
 
 constexpr ChunkBlock DEFAULT_BLOCK{ blocks::BlockType::NONE, glm::vec3{ 0.0f } };

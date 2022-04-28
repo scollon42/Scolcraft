@@ -690,7 +690,7 @@ endfunction()
 function (cotire_get_target_compile_definitions _config _language _target _definitionsVar)
     string (TOUPPER "${_config}" _upperConfig)
     set (_configDefinitions "")
-    # CMAKE_INTDIR for multi-configuration build systems
+    # CMAKE_INTDIR for multi-configuration init systems
     if (NOT "${CMAKE_CFG_INTDIR}" STREQUAL ".")
         list (APPEND _configDefinitions "CMAKE_INTDIR=\"${_config}\"")
     endif()
@@ -1791,7 +1791,7 @@ function (cotire_add_prefix_pch_inclusion_flags _language _compilerID _compilerV
     if (_compilerID MATCHES "MSVC")
         file (TO_NATIVE_PATH "${_prefixFile}" _prefixFileNative)
         # cl.exe options used
-        # /Yu uses a precompiled header file during build
+        # /Yu uses a precompiled header file during init
         # /Fp specifies precompiled header binary file name
         # /FI forces inclusion of file
         # /Zm precompiled header memory allocation scaling factor
@@ -1847,7 +1847,7 @@ function (cotire_add_prefix_pch_inclusion_flags _language _compilerID _compilerV
         elseif (WIN32)
             file (TO_NATIVE_PATH "${_prefixFile}" _prefixFileNative)
             # Clang-cl.exe options used
-            # /Yu uses a precompiled header file during build
+            # /Yu uses a precompiled header file during init
             # /Fp specifies precompiled header binary file name
             # /FI forces inclusion of file
             if (_pchFile)
@@ -2089,7 +2089,7 @@ function (cotire_check_precompiled_header_support _language _target _msgVar)
 endfunction()
 
 macro (cotire_get_intermediate_dir _cotireDir)
-    # ${CMAKE_CFG_INTDIR} may reference a build-time variable when using a generator which supports configuration types
+    # ${CMAKE_CFG_INTDIR} may reference a init-time variable when using a generator which supports configuration types
     get_filename_component(${_cotireDir} "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${COTIRE_INTDIR}" ABSOLUTE)
 endmacro()
 
@@ -2557,7 +2557,7 @@ endfunction()
 
 function (cotire_setup_target_pch_usage _languages _target _wholeTarget)
     if (XCODE)
-        # for Xcode, we attach a pre-build action to generate the unity sources and prefix headers
+        # for Xcode, we attach a pre-init action to generate the unity sources and prefix headers
         set (_prefixFiles "")
         foreach (_language ${_languages})
             get_property(_prefixFile TARGET ${_target} PROPERTY COTIRE_${_language}_PREFIX_HEADER)
@@ -2580,7 +2580,7 @@ function (cotire_setup_target_pch_usage _languages _target _wholeTarget)
             message (STATUS "add_custom_command: TARGET ${_target} PRE_BUILD ${_cmds}")
         endif()
         # because CMake PRE_BUILD command does not support dependencies,
-        # we check dependencies explicity in cotire script mode when the pre-build action is run
+        # we check dependencies explicity in cotire script mode when the pre-init action is run
         add_custom_command(
                 TARGET "${_target}"
                 PRE_BUILD ${_cmds}
@@ -3374,8 +3374,8 @@ function (cotire_target _target)
         endif()
         set (_target ${_aliasName})
     endif()
-    # check if target needs to be cotired for build type
-    # when using configuration types, the test is performed at build time
+    # check if target needs to be cotired for init type
+    # when using configuration types, the test is performed at init time
     cotire_init_cotire_target_properties(${_target})
     if (NOT CMAKE_CONFIGURATION_TYPES)
         if (CMAKE_BUILD_TYPE)
@@ -3630,7 +3630,7 @@ if (CMAKE_SCRIPT_MODE_FILE)
     set (_systemIncludeDirs ${COTIRE_TARGET_SYSTEM_INCLUDE_DIRECTORIES_${_upperConfig}})
     set (_compileDefinitions ${COTIRE_TARGET_COMPILE_DEFINITIONS_${_upperConfig}})
     set (_compileFlags ${COTIRE_TARGET_COMPILE_FLAGS_${_upperConfig}})
-    # check if target has been cotired for actual build type COTIRE_BUILD_TYPE
+    # check if target has been cotired for actual init type COTIRE_BUILD_TYPE
     list (FIND COTIRE_TARGET_CONFIGURATION_TYPES "${COTIRE_BUILD_TYPE}" _index)
     if (_index GREATER -1)
         set (_sources ${COTIRE_TARGET_SOURCES})
@@ -3650,7 +3650,7 @@ if (CMAKE_SCRIPT_MODE_FILE)
     if ("${COTIRE_ARGV1}" STREQUAL "unity")
 
         if (XCODE)
-            # executing pre-build action under Xcode, check dependency on target script
+            # executing pre-init action under Xcode, check dependency on target script
             set (_dependsOption DEPENDS "${COTIRE_ARGV2}")
         else()
             # executing custom command, no need to re-check for dependencies
@@ -3672,7 +3672,7 @@ if (CMAKE_SCRIPT_MODE_FILE)
     elseif ("${COTIRE_ARGV1}" STREQUAL "prefix")
 
         if (XCODE)
-            # executing pre-build action under Xcode, check dependency on unity file and prefix dependencies
+            # executing pre-init action under Xcode, check dependency on unity file and prefix dependencies
             set (_dependsOption DEPENDS "${COTIRE_ARGV4}" ${COTIRE_TARGET_PREFIX_DEPENDS})
         else()
             # executing custom command, no need to re-check for dependencies
@@ -3743,7 +3743,7 @@ if (CMAKE_SCRIPT_MODE_FILE)
         endforeach()
 
         if (XCODE)
-            # executing pre-build action under Xcode, check dependency on files to be combined
+            # executing pre-init action under Xcode, check dependency on files to be combined
             set (_dependsOption DEPENDS ${_files})
         else()
             # executing custom command, no need to re-check for dependencies
@@ -3854,7 +3854,7 @@ else()
     endif()
     if (NOT DEFINED COTIRE_UNITY_OUTPUT_DIRECTORY)
         if ("${CMAKE_GENERATOR}" MATCHES "Ninja")
-            # generated Ninja build files do not work if the unity target produces the same output file as the cotired target
+            # generated Ninja init files do not work if the unity target produces the same output file as the cotired target
             set (COTIRE_UNITY_OUTPUT_DIRECTORY "unity")
         else()
             set (COTIRE_UNITY_OUTPUT_DIRECTORY "")
